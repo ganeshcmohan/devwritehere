@@ -1,0 +1,19 @@
+{% from '_macros.html' import render_field2, raw_field, social_login_icon %}
+
+{% extends 'security/base.html' %}
+
+{% block content %}
+<h3>join our community of writers:</h3>
+<form class='from landing-form' action="{{ url_for('account.register', provider_id=provider.id if provider else None) }}" method="POST" id="createPopupForm">
+    {{ form.hidden_tag() }}
+    {{ render_field2(form.display_name, class_="required text-field", placeholder="name") }}
+    {{ render_field2(form.email, class_="required text-field", placeholder="email") }}
+    {{ render_field2(form.password, class_="required text-field", placeholder="password") }}
+    {{ render_field2(form.confirm, class_="required text-field", placeholder="confirm your password") }}
+    <label label-default class="checkbox">
+        {{ form.terms()|safe }}I agree to the 
+        <a href="{{ url_for('general.guidelines') }}">user guidelines</a>.
+    </label>
+    <button id="btn-create-my-profile" type="submit" class="btn btn-landing btn-primary">create my profile</button>
+</form>
+{% endblock %}

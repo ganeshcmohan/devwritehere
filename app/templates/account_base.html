@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}: profile{% endblock %}
+
+{%- block main %}
+<div class="container" id="gridContainer-profile">
+<section id="menu-container">
+        <ul class="nav nav-tabs">
+         {%- for endpoint, caption in [
+		    ('account.profile', 'profile'),
+		    ('account.photo', 'photo'),
+		    ('account.connections', 'social connections'),
+		    ('account.email', 'email'),
+		    ('account.password', 'password'),
+		] %}
+		<li class="{% if endpoint == request.endpoint %}active{% endif %}">
+		    <a href="{{ url_for(endpoint) }}">{{ caption }}</a></li>
+		{%- endfor %}
+		<li ><a href="{{ url_for('write.my_page', date_slug=current_user.date_slug, display_name_slug=current_user.display_name_slug) }}">
+		    <i class="icon-share"></i>my page</a></li>
+		{% if current_user.is_admin %}
+		    <li ><a href="{{ url_for('admin.admin_index') }}">
+		        <i class="icon-share"></i>admin panel</a></li>
+		{% endif %}
+		</ul>
+
+
+
+<div class="profile">
+{% block content %}{% endblock content %}
+</div>
+</div
+{% endblock %}

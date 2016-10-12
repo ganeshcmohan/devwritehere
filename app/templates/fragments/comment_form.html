@@ -1,0 +1,22 @@
+{% from '_macros.html' import render_field %}
+
+<div>
+    <form class="" action="{{ url_for('write.comment', post_id=post.id) }}" method="POST" id="commentForm">
+
+
+        <!--<input type="hidden" name="extract" value="{{ form.extract.data }}" id="extractField" />-->
+        {{ render_field(form.extract, id='extractField') }}
+
+        <i id="extractPreview">{{ form.extract.data }}</i>
+        <label label-default class="control-label label-default" for="commentField"></label>
+
+        {{ render_field(form.comment, id='commentField') }}
+        <!--<textarea name="comment" id="commentField" style=""></textarea>-->
+
+        <div>
+            <button type="submit" class="well-small blue-button pull-left" id="postComment">Post Comment</button>
+            <a href="#" class="well-small blue-button pull-right" id="cancelComment" onclick="javascript: $('#comment').popover('destroy'); return false;">Cancel</a>
+            <br/><br/>
+        </div>
+    </form>
+</div>

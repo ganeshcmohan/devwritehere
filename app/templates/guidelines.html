@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+    {% block sortby %}
+    <div id="sort-by" style="">
+    </div>
+    {% endblock %}
+
+
+    {% block main %}
+
+    <div id="gridContainer" class="normal-page">
+
+    <div class="row-fluid" xmlns="http://www.w3.org/1999/html">
+    <div class="span8">
+        <div id="postContainer" class="content-page">
+            <div class="post-headline">{{ page.title }}</div>
+
+            <div class="post-content">
+                <br />
+                {{ page.content | safe }}
+                <!--
+                <p>
+                <br />
+
+                When I started writing for a living, one of the best pieces of advice ever offered to me was: "Never
+                    write something you would not want your grandmother to read."<br /><br />
+
+                It's genius really, because when you write by that standard, you focus on the communication of your ideas
+                    and the structure of your argument.<br /><br />
+
+                And when you focus on these most important aspects of writing you are not only more persuasive, and appear
+                    more intelligent, you invariably find that being nasty, being deceitful or being a potty mouth simply
+                    gets in the way.<br /><br />
+
+                So, whenever you WriteHere we ask that you abide by three universal principles we know your grandmother
+                    would approve of:<br /><br />
+
+                - common courtesy (be nice)<br />
+                - common decency (don't steal the work of others and don't pretend to be someone you're not)<br />
+                - and common sense – (don't break the law).<br /><br />
+
+                We respect, defend and work tirelessly to promote the right to free speech. It's one of the foundations
+                    of WriteHere. Please do not abuse the privilege.<br /><br />
+
+                Cameron Kellock<br />
+                Founder, WriteHere<br /><br />
+
+
+                </p>
+
+                <p>
+                    <b>Don't be offensive</b><br /><br />
+
+                    Please respect the law<br /><br />
+
+
+
+                    Libel, slanderous and defamatory opinions and comments are not allowed.<br /><br />
+
+                    We also respect the right of people to be able to surf the Internet and without having to stumble
+                    over inappropriate images or language. <br /><br />
+
+                    This is not a place for pornography in any form. We will not allow crude or indecent language,
+                    adult themed stories or images, sexual tips or advice, information on adult toys or products, or
+                    links to external sites containing adult content. There are plenty of other sites on the web for
+                    that. Please use them, not WriteHere, if you feel that way inclined.<br /><br />
+
+                    As owners of this site we reserve the right to take down content that is flagged to us as being
+                    offensive and ask for it to be edited. Repeat offenders will have their accounts terminated and
+                    denied future access.<br /><br />
+
+                    You are solely responsible for the content you publish, but we are responsible for our community standards. We will remove your content if it's offensive.
+                    <br /><br />
+                </p>
+
+                <p>
+                    <b>Don't be abusive</b><br /><br />
+
+                    Please respect the right to free speech. <br /><br />
+
+                    Opinions are personal. They are often different from yours. They may even be objectionable. But
+                    please respect the right of others to have their opinion when writing your own or making
+                    comments.<br /><br />
+
+                    WriteHere is a global community forum that allows and encourages free thought and expression.
+                    Debate and disagreement are fine. That's one of the main reasons WriteHere exists. However, we
+                    will not tolerate bullies.<br /><br />
+
+                    Any writing or comment that may be construed as hateful or biased against individuals, groups,
+                    or organisations based on criteria such as race, religion, disability, sex, age, veteran status,
+                    sexual orientation, gender identity, or political affiliation is not allowed. Any writing or comment
+                    that encourages harm against any person, even self-inflicted, is not allowed.<br /><br />
+
+                    As owners of this site we reserve the right to take down content that is flagged to us as being
+                    abusive and ask for it to be edited. Repeat offenders will have their accounts terminated and
+                    denied future access.<br /><br />
+
+                    You are solely responsible for the content you publish, but we are responsible for our community standards. We will remove your content if it's abusive.<br /><br />
+
+                </p>
+
+                <p>
+                    <b>Respect copyright law</b><br /><br />
+
+                    Please respect the intellectual property rights of others.<br /><br />
+
+                    You would not want another writer to steal your ideas or copy your work. So please, never steal
+                    the work of others.<br /><br />
+
+                    If someone else inspires you, give credit whenever it is due.<br /><br />
+
+                    Quote other writers properly - name and source, please.<br /><br />
+
+                    If you upload a picture to accompany your writing, you'll notice that we provide a space for you
+                    to input the source - the name of the photographer, the url or the name of the site - so that it
+                    will be displayed beneath the image.<br /><br />
+
+                    Take the time to do these things, it will give you and your opinion more credibility.<br /><br />
+
+                    If you are a copyright owner and you feel your work has been used without proper attribution or
+                    permission flag the content using the drop down menu, then contact us via email at
+                    <a href="mailto:admin@writehere.com">admin@writehere.com</a> and we will investigate.<br /><br />
+
+                    As owners of this site we reserve the right to take down content that is flagged to us as being
+                    stolen and ask for it to be edited. Repeat offenders will have their accounts terminated and denied
+                    future access.<br /><br />
+
+                    You are solely responsible for the content you publish, but we are responsible for protecting the rights of our community. We will remove your content if it's stolen.<br /><br />
+                </p>
+
+                <p>
+                    <b>Respect trademark law</b><br /><br />
+
+                    Please respect the Trademark rights of others.<br /><br />
+
+                    People invest considerable time, effort and money into building their brands and reputations.<br /><br />
+
+                    It doesn't matter if you're being naughty, or nice, it's always wrong to mislead others into
+                    thinking you represent a brand or business, you are endorsed by them, or you are affiliated with
+                    them.<br /><br />
+
+                    If you are a trademark owner and you feel your good name has been misrepresented flag the content
+                    using the drop down menu, then contact us via email at
+                    <a href="mailto:admin@writehere.com">admin@writehere.com</a> and we will investigate.<br /><br />
+
+                    As owners of this site we reserve the right to take down content that is flagged to us as being in
+                    violation of someone else's Trademark and ask for it to be edited. Repeat offenders will have their
+                    accounts terminated and denied future access.<br /><br />
+
+                    You are solely responsible for the content you publish, but we are responsible for protecting the rights of our community. We will remove your content if it's not what it claims to be.<br /><br />
+                </p>
+
+                <p>
+                    <b>Don't be an impostor</b><br /><br />
+
+                    Please respect the right of individuals, organisations and brands to speak for themselves.<br /><br />
+
+                    Using someone else's name to post opinions and comments is not allowed. Don't pretend to be someone
+                    else.<br /><br />
+
+                    If you believe someone is posting under the wrong identity flag the content using the drop down
+                    menu, then contact us via email at <a href="mailto:admin@writehere.com">admin@writehere.com</a> and
+                    we will investigate.<br /><br />
+
+                    As owners of this site we reserve the right to take down content that is flagged to us as being
+                    written by an impostor and ask for it to be edited. Repeat offenders will have their accounts
+                    terminated and denied future access.<br /><br />
+
+                    You are solely responsible for the content you publish, but we are responsible for protecting the rights of our community. We will remove your content and delete your account if playing with someone else's reputation.<br /><br />
+                </p>
+
+                <p>
+                    <b>Don't spam, ever.</b><br /><br />
+
+                    Spam will be removed immediately. Offenders will have their accounts closed and won't be allowed
+                    back in. And we will report the IP address to the Interweb Headmaster.<br /><br />
+
+                    If you come across content you believe to be spam, please flag it using the drop down menu and we
+                    will investigate.<br /><br />
+                </p>
+
+                <p>
+                    <b>Our service commitment</b><br /><br />
+
+                    WriteHere is provided "as is" and "as available". We will do everything we can to ensure the
+                    WriteHere site is running at all times, and that the content submitted by our members is presented
+                    as intended.<br /><br />
+
+                    However, we do not assume responsibility for the availability, accuracy, retention or deletion of
+                    content. Please keep a copy of your writing. Do not leave it up to us to keep it for you – we have
+                    a hard enough time keeping a track of our own stuff.<br /><br />
+                </p>
+                -->
+            </div>
+        </div>
+    </div>
+    <div class="span1"></div>
+
+    <div class="span3">
+        <div id="rightColumnGuidelines">
+
+            <div class="general-blue-box grid-item" style="float:none !important; margin-left: auto; margin-right: auto; margin-top: 30px;">
+                <div class="well" >
+                    <span class="twenty">Flag it, please</span>
+                    <br/><br/>
+                    <div>
+                        If you find content that you believe violates our User Guidelines please report it.<br /><br /> You can submit
+                        content for review by using the "Flag" drop down menu that appears on all Opinion Pages and Comment
+                        Windows.
+                    </div>
+                </div>
+            </div>
+
+            <div class="general-blue-box grid-item" style="float:none !important; margin-left: auto; margin-right: auto; margin-top: 30px;">
+                <div class="well" >
+                    <span class="twenty">FAQ</span>
+                    <br/><br/>
+                    <div>
+                        We know you'll have some questions. We've tried to provide some <a href="{{url_for('general.faq')}}">answers</a> ahead of time.
+                    </div>
+                </div>
+            </div>
+
+            <div class="general-blue-box grid-item" style="float:none !important; margin-left: auto; margin-right: auto; margin-top: 30px;">
+                <div class="well" >
+                    <span class="twenty">Write to us</span>
+                    <br/><br/>
+                    <div>
+                        WriteHere is new, and we're working bloody hard to improve it. Please don't hesitate to let us know
+                        the things you like, and the things you don't. After all, your opinion is the only one that
+                        matters.<br /><br /> You can email us at <a href="mailto:feedback@writehere.com">feedback@writehere.com</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    </div>
+
+    </div>
+
+    {%- endblock %}
+

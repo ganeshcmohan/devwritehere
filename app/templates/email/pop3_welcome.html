@@ -1,0 +1,23 @@
+{% extends 'email/email_base.html' %}
+
+{% block main %}
+
+    {% if html %}
+        <p>
+            Hello,<br /><br />
+            This is an automated e-mail confirming that your POP3 Account has been successfully activated!<br /><br />
+
+            Thanks,<br />
+            WriteHere<br /><br />
+        </p>
+    {% else %}
+
+        Hello,
+
+        This is an automated e-mail confirming that your POP3 Account has been successfully activated!
+
+        Thanks,
+        WriteHere
+    {% endif %}
+
+{% endblock %}

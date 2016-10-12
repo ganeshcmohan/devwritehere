@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        {% include "meta.html" %}
+         <meta charset="UTF-8">
+        <title>Write Here</title>
+    <!-- Responsive Metatag -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon" />
+        <link href="{{ url_for('static', filename='css_new/bootstrap.css') }}" rel="stylesheet" />
+        <link href="{{ url_for('static', filename='css/landing.css') }}" rel="stylesheet" />
+        <link href="{{ url_for('static', filename='css/landing.old.css') }}" rel="stylesheet" />
+        <style>
+        .modal-backdrop, .modal-backdrop.fade.in {
+            opacity: 0.1;
+        }
+        </style>
+        {% block css %}{% endblock %}
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-38388344-2']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+    </head>
+
+    <body>
+    {% include 'mdl_forgot_password.html' %}
+    {% include 'mdl_login.html' %}
+    {% include 'mdl_login_simple.html' %}
+    {% include 'mdl_create.html' %}
+    {% include 'mdl_create_simple.html' %}
+
+        <div class="container-fluid">
+        <section class="landing-block">
+            <h1 class="landing-header">Welcome to WriteHere</h1>
+            <span class="sub-header">home for the everyday opinions and stories of everyday people   </span>
+            <p class="landing-button-group">
+                {% block content %}{% endblock %}
+                
+            </p>
+
+            
+        </section>
+        <section class="credits-block">
+            <span>© Jeanette Dobrindt, photographer</span>
+        </section>
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <a href="#close" title="Close" class="close-btn" data-dismiss="modal">x</a>
+                    <div class="modal-body">
+                        <h2 class="md-signin-header">join our community of writers: </h2>
+                        <form role="form">
+                            <div class="form-group-basic">
+                                <input type="text" class="form-control-basic" id="name" placeholder="name">
+                            </div>
+                            <div class="form-group-basic">
+                                <input type="email" class="form-control-basic" id="email" placeholder="email">
+                            </div>
+                            <div class="form-group-basic">
+                                <input type="password" class="form-control-basic"  id="pwd" placeholder="password">
+                            </div>
+                            <div class="form-group-basic">
+                                <input type="password" class="form-control-basic"  id="cpwd" placeholder="confirm password">
+                            </div>
+                            <div class="checkbox">
+                                <span><label class="form-control-cb-basic"><input type="checkbox" >I agree to the <a href="#">user guidelines.</a></label> <span class="create-button">create my profile</span></span>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+        
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+            <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="/static/js/global.js"></script>
+        {% block js %}{% endblock %}
+    </body>
+</html>

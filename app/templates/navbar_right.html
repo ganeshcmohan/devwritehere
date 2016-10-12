@@ -1,0 +1,76 @@
+{% from '_macros.html' import raw_field, social_login_icon %}
+<li id="navbar-write">
+{% if current_user.is_authenticated %}
+    {% if current_user.verified %}
+    <a class="pjax" tabindex="-1" href="/write" />
+    {% else %}
+    <a tabindex="-1" href="/account/email" />
+    {% endif %}
+{% else %}
+<a tabindex="-1" href="#mdl_login_or_create" data-toggle="modal">
+{% endif %}
+<img class="img img-rounded avatar-small" src="{{ url_for('static', filename='img/write.png') }}"/>
+</a>
+</li>
+
+<li class="dropdown navbar-icon">
+<a tabindex="-1" id="drop-search" class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+<img class='img img-icon' src="/static/img/glyphicons_027_search.png" alt="search" />
+</a>
+<ul class="dropdown-menu wh-lightgray" role="menu" aria-labelledby="drop-search">
+<li id="dropdown-search">
+    <form class="form-search" action="/search" method="get">
+      <input class="search input-large search-query autocomplete" name="query"
+            type="text" data-provide="typeahead"/>
+      <button type="submit" class="btn pull-right">search</button>
+    </form>
+</li>
+</ul>
+</li>
+
+<li class="dropdown navbar-icon">
+<a tabindex="-1" id="drop1" class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+<img class='img img-icon' src="/static/img/glyphicons_195_circle_info.png" alt="info" />
+</a>
+<ul class="dropdown-menu wh-lightgray" role="menu" aria-labelledby="drop1">
+<li><a class="pjax" tabindex="-1" href="/guidelines">guidelines</a></li>
+<li><a class="pjax" tabindex="-1" href="/faq">FAQ</a></li>
+<li><a class="pjax" tabindex="-1" href="/about-writehere">about writehere</a></li>
+<li><a class="pjax" tabindex="-1" href="/about-us">about us</a></li>
+<li><a class="pjax" tabindex="-1" href="/writing-tips">writing tips</a></li>
+<li><a href="mailto:feedback@writehere.com">contact</a></li>
+</ul>
+</li>
+
+{%- if current_user.is_authenticated -%}
+<li id="navbar-me" class="dropdown">
+<a id="drop_me" class="dropdown-toggle login-reuired" tabindex="-1"
+    role="button" data-toggle="dropdown" href="#">
+{% if current_user.avatar %}
+<img class="img img-rounded avatar-small" src="{{ url_for('media.show_avatar', user_id=current_user.id) }}" alt="avatar"/>
+{% else %}
+<img class="img avatar-small" src="{{ url_for('static', filename='img/avatar.png') }}" alt="avatar"/>
+{% endif %}
+| me
+</a>
+<ul class="dropdown-menu wh-lightgray" role="menu" aria-labelledby="drop_me">
+<li><a tabindex="-1" href="{{ url_for('write.my_page', date_slug=current_user.date_slug, display_name_slug=current_user.display_name_slug) }}">my page</a></li>
+
+<li><a tabindex="-1" href="/account/profile">my profile</a></li>
+
+{% if current_user.is_admin %}
+<li><a tabindex="-1" href="/admin">admin</a></li>
+{% endif %}
+<li><a tabindex="-1" href="{{ url_for('security.logout') }}">sign out</a></li>
+</ul>
+</li>
+{%- else -%}
+<li id="navbar-account" class="dropdown">
+<a id="drop_account" class="dropdown-toggle login-reuired" tabindex="-1"
+    role="button" data-toggle="dropdown" href="#">account</a>
+<ul class="dropdown-menu wh-lightgray" role="menu" aria-labelledby="drop_me">
+<li><a href="#mdl_login" data-toggle="modal">members sign in</a></li>
+<li><a href="#mdl_create" data-toggle="modal">join us - it's free!</a></li>
+</ul>
+</li>
+{%- endif -%}

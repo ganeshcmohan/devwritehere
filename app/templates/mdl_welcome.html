@@ -1,0 +1,24 @@
+{% extends 'mdl_landing_base.html' %}
+
+{% block mdl_id %}mdl_login_or_create{% endblock %}
+
+{% block mdl_header %}
+<div class="mdl-logo-container">
+    <img class="mdl-logo" src="/static/img/write-here-logo-370.png" alt="writehere logo"/>
+</div>
+{% endblock %}
+
+{% block mdl_content %}
+<p class="text-center">You are welcome to read as many opinions and comments as you like.</p>
+<p class="text-center">Members of our community can write opinions and make comments.</p>
+<br/>
+<div class="btns">
+    <a href="#mdl_login" id="btn-members-sign-in"
+        onclick="$('#mdl_login_or_create').modal('hide');"
+        class="btn btn-primary btn-wh" data-toggle="modal">members sign in</a>
+    <span class="or">or</span>
+    <a href="#mdl_create" id="btn-join-us"
+        onclick="$('#mdl_login_or_create').modal('hide');"
+        class="btn btn-primary btn-wh" data-toggle="modal">join us - it's free!</a>
+</div>
+{% endblock %}

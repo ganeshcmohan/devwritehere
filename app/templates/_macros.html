@@ -1,0 +1,488 @@
+{% macro social_login_icon(provider_id, display_name, logo) %}
+    <form action="/login/{{provider_id}}" method="GET">
+        <input type="hidden" name="next" class="next-field" value="" />
+        <input type="image" src="{{ logo }}" value="Login with {{ display_name }}" />
+    </form>
+{% endmacro %}
+
+{% macro social_share_bar() %}
+    <div id="shareBar">
+        <!-- facebook like icon -->
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=152301828245351";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+        <div class="fb-like" data-send="false" data-layout="box_count" data-width="450" data-show-faces="true" data-font="arial"></div>
+
+    <br/><br/>
+        <!-- twitter tweet icon -->
+        <a href="https://twitter.com/share" class="twitter-share-button" data-lang="en" data-count="vertical">Tweet</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+    <br/><br/>
+    <!-- Google Share Icon -->
+    <div class="g-plus" data-action="share" data-annotation="vertical-bubble" data-height="60"></div>
+    <script type="text/javascript">
+        (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+        })();
+    </script>
+
+    <br/><br/>
+        <!-- linkedin share icon -->
+        <script src="//platform.linkedin.com/in.js" type="text/javascript"></script>
+        <script type="IN/Share" data-counter="top"></script>
+    </div>
+
+{% endmacro %}
+
+{% macro upload(upload_form, crop_form, request, upload_type='opinion', current_user=None) %}
+
+    {% assets 'css_upload' %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+    {% assets 'js_upload' %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+
+    <div id="uploadPhotoModal" class="hide">
+        <a class="close" onclick="$(this).parent().hide(); return false;" href="#">&times;</a>
+
+        {% if upload_type == 'avatar' %}
+            <div class="uploadPhotoText-normal eighteen" >
+                Use the cursor and tools to position your image.
+            </div>
+            <div class="uploadPhotoText-light fourteen">
+            (We can only accept JPG, PNG, and GIF image files up to 4MB.)<br/><br/>
+            </div>
+        {% else %}
+            <div class="uploadPhotoText-normal eighteen" >
+                Select horizontal or vertical orientation,<br /> then use the tools to position your image.
+            </div>
+            <div class="uploadPhotoText-light fourteen">
+                (We can only accept JPG, PNG, and GIF image files up to 4MB.)<br/><br/>
+            </div>
+        {% endif %}
+
+
+        <div class="alert alert-error hide" id="uploadError">
+            <a class="close" onclick="$(this).parent().hide(); return false;" href="#">&times;</a>
+            Failed to upload image, please only upload JPG, PNG, or GIF file.
+        </div>
+        <div class="alert alert-error hide" id="cropError">
+            <a class="close" onclick="$(this).parent().hide(); return false;" href="#">&times;</a>
+            <span>Error occurred while cropping image, please try again.</span>
+        </div>
+
+        <div id="uploadSpinner" class="hide" style="position: relative; top:  100px;"><img src="{{ url_for('static', filename='img/spinner.gif') }}" /></div>
+
+        {% if upload_type == 'avatar' %}
+            <!-- upload -->
+            <form action="{{ url_for('media.upload_avatar') }}" method="POST" id="uploadForm" enctype="multipart/form-data">
+                {{ upload_form.hidden_tag() }}
+                {{ raw_field(upload_form.photo, class_="hide") }}
+            </form>
+        {% else %}
+            <!-- upload -->
+            <form action="{{ url_for('media.upload') }}" method="POST" id="uploadForm" enctype="multipart/form-data">
+                {{ upload_form.hidden_tag() }}
+                {{ raw_field(upload_form.photo, class_="hide") }}
+            </form>
+        {% endif %}
+
+
+        {% if upload_type == 'avatar' %}
+        <div id="crop" style="width: 300px; height: 300px; overflow:hidden; border:dashed 1px #e3e3e3;"><div id="fakeUploadButton"><a href="#"  class="" onclick="return false;">Drag and drop image here <br />
+or click to upload</a></div></div>
+        {% else %}
+        <div id="crop" style="width: 400px; height: 300px; overflow:hidden; border:dashed 1px #e3e3e3;"><div id="fakeUploadButton"><a href="#"  class="" onclick="return false;">Drag and drop image here <br />
+or click to upload</a></div></div>
+        {% endif %}
+        <br/>
+
+        <div id="cropTools">
+            {% if upload_type != 'avatar' %}
+                <a href="#" id="swapHorizontalButton" rel="tooltip" title="Switch to Landscape"><img src="{{ url_for('static', filename='img/flip-horizontal-36.png') }}" /></a>
+                <a href="#" id="swapVerticalButton"><img src="{{ url_for('static', filename='img/flip-vertical-36.png') }}" /></a>
+            {% endif %}
+            <a href="#" id="zoomInButton"><img src="{{ url_for('static', filename='img/plus.png') }}" /></a>
+            <a href="#" id="zoomOutButton"><img src="{{ url_for('static', filename='img/minus.png') }}" /></a>
+            <a href="#" id="resetCropButton"><img src="{{ url_for('static', filename='img/left-rd-bk.png') }}" /></a>
+
+            <br/><br/>
+
+            {% if upload_type == 'avatar' %}
+                <form action="{{ url_for('media.crop_avatar') }}" method="POST" id="cropForm">
+                    {{ crop_form.hidden_tag() }}
+                    <div><a href="#" class="profile-edit-button-btn"  id="cropButton" onclick="return false;"> &nbsp;&nbsp; Looks good!  &nbsp;&nbsp;</a></div>
+                </form>
+            {% else %}
+                <form action="{{ url_for('media.crop') }}" method="POST" id="cropForm">
+                    {{ crop_form.hidden_tag() }}
+                    <div><a href="#" class="profile-edit-button-btn"  id="cropButton" onclick="return false;">  &nbsp;&nbsp; Looks good! &nbsp;&nbsp;  </a></div>
+                </form>
+            {% endif %}
+
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        $(function() {
+            var isCropping = false;
+
+            $('body').tooltip({
+                selector: "a[rel=tooltip]"
+            })
+
+            function setCropArea() {
+                {% if upload_type == 'avatar' %}
+                    $('#crop').css('width', '300');
+                    $('#crop').css('height', '300');
+                    {% else %}
+                    $('#crop').css('width', '400');
+                    $('#crop').css('height', '300');
+                {% endif %}
+            }
+
+            function resetCrop() {
+                $('#cropTools').hide();
+                {% if upload_type == 'avatar' %}
+                    $('#crop').css('width', '300');
+                    $('#crop').css('height', '300');
+                {% else %}
+                    $('#crop').css('width', '400');
+                    $('#crop').css('height', '300');
+                {% endif %}
+
+                $('#uploadForm').each(function(){
+                    this.reset();
+                });
+                $('#crop').lhpMegaImgViewer('destroy');
+                $('#fakeUploadButton').show();
+                $('#orientation').attr('value', 'horizontal');
+            }
+
+            {% if upload_type == 'avatar' %}
+                var cropPhotoUrl = '{{url_for("media.show_avatar", user_id=current_user.id, size="full")}}'
+            {% else %}
+                var cropPhotoUrl = '{{ url_for("media.crop_photo_url") }}';
+            {% endif %}
+
+            var settings = {
+                "viewportWidth" : "100%",
+                "viewportHeight" : "100%",
+                'fitToViewportShortSide' : true,
+                'contentSizeOver100' : false,
+                'startScale': 1,
+                'contentUrl': cropPhotoUrl,
+                "animTime" : 500,
+                "startX" : 0,
+                "startY" : 0,
+                "draggInertia" : 10,
+                "intNavEnable" : false,
+                "intNavPos" : "B",
+                "intNavAutoHide" : false,
+                "intNavMoveDownBtt" : true,
+                "intNavMoveUpBtt" : true,
+                "intNavMoveRightBtt" : true,
+                "intNavMoveLeftBtt" : true,
+                "intNavZoomBtt" : true,
+                "intNavUnzoomBtt" : true,
+                "intNavFitToViewportBtt" : true,
+                "intNavFullSizeBtt" : true,
+                "popupShowAction" : "click"
+            };
+
+
+            setCropArea();
+
+            $('#uploadPhotoModal').easyModal({
+                top: 100,
+                overlayClose: false
+            });
+
+            $('#uploadOpinionPhoto').live('click', function(e) {
+                if (!$('#uploadPhotoModal').is(':visible')) {
+                    resetCrop();
+                    $('#uploadPhotoModal').css('left', e.pageX - 500);
+                    $('#uploadPhotoModal').trigger('openModal');
+
+                    /*$('#orientation').attr('value', 'horizontal');
+                    $('#fakeUploadButton').show();
+                    $('#cropError').hide();
+                    $('#uploadError').hide();
+                    $("#cropButton").addClass('disabled-blue-button');
+                    $('#uploadForm').each(function(){
+                        this.reset();
+                    });
+                    $('#crop').lhpMegaImgViewer('destroy');*/
+                }
+            });
+
+            $('#uploadAvatarPhoto').live('click', function(e) {
+                if (!$('#uploadPhotoModal').is(':visible')) {
+                    resetCrop();
+                    //$('#uploadPhotoModal').css('left', e.pageX - 500);
+                    $('#uploadPhotoModal').trigger('openModal');
+                }
+            });
+
+            $('#swapHorizontalButton').live('click',function(){
+                $('#crop').css('width', '400');
+                $('#crop').css('height', '300');
+                $('#orientation').attr('value', 'horizontal');
+                $("#crop").lhpMegaImgViewer('destroy');
+                $("#crop").lhpMegaImgViewer(settings);
+                $('#crop').lhpMegaImgViewer('adaptsToContainer');
+                return false;
+            });
+
+            $('#swapVerticalButton').live('click',function(){
+                $('#crop').css('width', '300');
+                $('#crop').css('height', '400');
+                $('#orientation').attr('value', 'vertical');
+                $("#crop").lhpMegaImgViewer('destroy');
+                $("#crop").lhpMegaImgViewer(settings);
+                $('#crop').lhpMegaImgViewer('adaptsToContainer');
+                return false;
+            });
+
+            $('#zoomInButton').mousedown(function(){
+                $('#crop').lhpMegaImgViewer('zoom')
+                return false;
+            });
+
+            $('#zoomOutButton').mousedown(function(){
+                $('#crop').lhpMegaImgViewer('unzoom')
+                return false;
+            });
+
+                $('#zoomInButton').mouseup(function(){
+                    $('#crop').lhpMegaImgViewer('zoomStop')
+                    return false;
+                });
+
+                $('#zoomOutButton').mouseup(function(){
+                    $('#crop').lhpMegaImgViewer('zoomStop')
+                    return false;
+                });
+
+
+            $('#resetCropButton').click(function(){
+                resetCrop();
+                return false;
+            });
+
+            $('#fakeUploadButton').live('click', function() {
+               $('#photo').trigger('click');
+               return false;
+            });
+            /* live upload image */
+            $('#photo').live('change', function() {
+                $('#uploadError').hide();
+                $('#uploadSpinner').show();
+                $("#uploadForm").ajaxForm({
+                    success: function(data) {
+                        if (data['success']==true) {
+                            $('#crop').lhpMegaImgViewer('destroy');
+                            var timestamp = new Date().getTime();
+                            {% if upload_type == 'avatar' %}
+                                cropPhotoUrl = '{{url_for("media.show_avatar", user_id=current_user.id)}}';
+                            {% endif %}
+                            $('#crop img').attr('src', cropPhotoUrl + '?' +timestamp );
+                            $("#crop").lhpMegaImgViewer(settings);
+                            $('#cropTools').show();
+                            $('#fakeUploadButton').hide();
+                        } else {
+                            $('#uploadError').show();
+                            resetCrop();
+                        }
+                    },
+                    error: function() {
+                        $('#uploadError').show();
+                        resetCrop();
+                    },
+                    complete: function() {
+                        $('#uploadSpinner').hide();
+                    }
+                }).submit();
+            });
+
+            $('#removePictureButton').click(function(e){
+                $.ajax({
+                    url: '{{ url_for("media.remove") }}',
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#delete_photo').val('true');
+
+                        var timestamp = new Date().getTime();
+                        $('#previewImage img').attr('src', '{{ url_for("static", filename="img/blank-photo.png") }}' + '?' +timestamp);
+                        $('#removePictureButton').addClass('disabled');
+                        $('#previewImage img').css('opacity', '0.5');
+                        $('#changesWarning').show();
+                    }
+                })
+                e.preventDefault();
+            });
+
+
+            /* send crop coordinates */
+            $('#cropButton').click(function() {
+                $('#cropError').hide();
+
+                var cropData = $('#crop').lhpMegaImgViewer('getCurrentState');
+                $('#center_x').attr('value', cropData.xPosInCenter);
+                $('#center_y').attr('value', cropData.yPosInCenter);
+                $('#prop_y').attr('value', cropData.hPropViewpContent);
+                $('#prop_x').attr('value', cropData.wPropViewpContent);
+                $('#zoom').attr('value', cropData.scale);
+
+                if (!parseInt($('#center_x').attr('value')) > 0) {
+                    return false;
+                }
+
+                if (isCropping) return false;
+                isCropping = true;
+
+                $('#cropForm').ajaxSubmit({
+                    async: false,
+                    success: function(data) {
+                        if (data['success'] === true) {
+                            var timestamp = new Date().getTime();
+                            $('#previewImage img').attr('src', cropPhotoUrl+'?'+timestamp);
+                            $('#previewImage').fadeIn('slow');
+                            $('#previewImage img').css('opacity', '1');
+                            $('#removePictureButton').removeClass('disabled');
+                            $('#uploadPhotoModal').trigger('closeModal');
+                            $('#changesWarning').show();
+                            $('#delete_photo').val('false');
+                        } else {
+                            $('#cropError').show();
+                        }
+                        isCropping = false;
+                    },
+                    error: function(data) {
+                        $('#cropError').show();
+                        isCropping = false;
+                    }
+                });
+
+                return false;
+            });
+        });
+
+    </script>
+
+{% endmacro %}
+
+{% macro render_field(field) %}
+
+    {{ field.label }}
+
+    {% if field.errors %}
+        <ul class="errors">
+            {% for error in field.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+
+    {{ field(**kwargs)|safe }}
+
+{% endmacro %}
+
+{% macro render_field2(field) %}
+
+    {% if field.errors %}
+        <ul class="errors">
+            {% for error in field.errors %}
+            <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {{ field(**kwargs)|safe }}
+
+{% endmacro %}
+
+{% macro raw_field(field) %}
+
+    {{ field(**kwargs)|safe }}
+
+{% endmacro %}
+
+{% macro show_provider_button(provider_id, display_name, conn) %}
+    {% if conn %}
+        <a href="/disconnect/{{ provider_id}}">Disconnect {{display_name}}</a><br/>
+    {% else %}
+        <a href="/login/{{ provider_id }}">Connect {{ display_name }}</a><br/>
+    {% endif %}
+{% endmacro %}
+
+{% macro grid(size, url, id) %}
+<script type="text/javascript">
+    $(window).load(function() {
+        $('#gridContainer').isotope({
+            itemSelector : '.grid-item',
+            columnWidth: parseInt('{{size}}'),
+            layoutMode: 'masonry',
+            isAnimated: true,
+            animationOptions: {
+            duration: 100,
+                    easing: 'linear',
+                    queue: true
+            }
+        });
+        writehere.loadGeneric('#gridContainer', '{{url}}', '{{id}}', true);
+    });
+</script>
+<div id="spinner0"></div>
+{% endmacro %}
+
+{% macro render_pagination(pager) %}
+<p>total: {{pager.total_count}}</p>
+<div class='pagination'>
+    <ul>
+    {% if pager.has_prev %}
+    <li><a href="?page={{pager.page - 1}}&q={{pager.q}}&user_id={{pager.user_id}}">&laquo;</a></li>
+    {% else %}
+    <li class="disabled"><span>&laquo;</span></li>
+    {% endif %}
+
+    {% for page in pager.pages() %}
+        {% if page == 0 %}
+        <li class="disabled"><span>...</span></li>
+        {% elif page != pager.page %}
+        <li><a href="?page={{page}}&q={{pager.q}}&user_id={{pager.user_id}}">{{ page }}</a></li>
+        {% else %}
+        <li class="active"><span>{{ page }}</span></li>
+        {% endif %}
+    {% endfor %}
+
+    {% if pager.has_next %}
+        <li><a href="?page={{pager.page + 1}}&q={{pager.q}}&user_id={{pager.user_id}}">&raquo;</a></li>
+    {% else %}
+        <li class="disabled"><span>&raquo;</span></li>
+    {% endif %}
+
+    </ul>
+    <form class="form-inline pull-right" action="" method="get">
+        <input class="input-mini" name="page" type="number"
+            style="width:40px;"
+            min="1" max="{{pager.page_count}}" value="1">
+        <button type="submit" class="btn btn-small">GO!</button>
+    </form>
+</div>
+{% endmacro %}

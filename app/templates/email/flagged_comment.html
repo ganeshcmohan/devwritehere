@@ -1,0 +1,32 @@
+{% extends 'email/email_base.html' %}
+
+{% block main %}
+
+    {% if html %}
+    <p>
+
+        The following comment was marked as "{{flag}}" by {{ user }}:<br /><br />
+
+        <b>Opinion:</b> <a href="{{ comment.post.short_url }}">{{ comment.post.headline }}</a> <br />
+        <b>Extract:</b> "{{ comment.extract }}" <br />
+        <b>Comment:</b> "{{ comment.comment }}" <br />
+        <b>Commenter:</b> {{ comment.user.profile.display_name }} <br /><br />
+
+        <a href="http://writehere.com/admin/comments?flag={{flag}}">Go to Admin Area</a>
+
+        <br /><br />
+    </p>
+    {% else %}
+
+    The following comment was marked as "{{flag}}" by {{ user }}:
+
+    Opinion: {{ comment.post.short_url }}">{{ comment.post.headline }}
+    Extract: {{ comment.extract }}
+    Comment: {{ comment.comment }}
+    Commenter: {{ comment.user.profile.display_name }}
+
+    Go to Admin Area: http://writehere.com/admin/comments?flag={{flag}}
+
+    {% endif %}
+
+{% endblock %}

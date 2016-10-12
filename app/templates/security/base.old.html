@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        {% include "meta.html" %}
+         <meta charset="UTF-8">
+        <title>Write Here</title>
+    <!-- Responsive Metatag -->
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon" />
+        <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon" />
+        <link href="{{ url_for('static', filename='bootstrap-2.3.2/css/bootstrap.min.css') }}" rel="stylesheet" />
+        <link href="{{ url_for('static', filename='css/bootstrap-override.css') }}" rel="stylesheet" />
+        <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" />
+        <link href="{{ url_for('static', filename='css/landing.css') }}" rel="stylesheet" />
+        <style>
+        .modal-backdrop, .modal-backdrop.fade.in {
+            opacity: 0.1;
+        }
+        </style>
+        {% block css %}{% endblock %}
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-38388344-2']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+
+    </head>
+
+    <body>
+    {% include 'mdl_forgot_password.html' %}
+    {% include 'mdl_login.html' %}
+    {% include 'mdl_login_simple.html' %}
+    {% include 'mdl_create.html' %}
+    {% include 'mdl_create_simple.html' %}
+
+        <div id="wrapper">
+            <!--<div id="top">-->
+                <!--<a href="/">-->
+                <!--<img id="logo" src="/static/img/write-here-logo-160.png" alt="Write|Here" />-->
+                <!--</a>-->
+            <!--</div>-->
+
+            <div id="middle">
+                <div id="panel">
+                    <div id="welcome">
+                        <h1>welcome to write<span style="font-weight:normal;">here<span></h1>
+                        <p>home for the everyday opinions and stories of everyday people</p>
+                    </div>
+                    <div id="content" class='landing-container'>
+                    {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="credit" style="">
+        Â© Jeanette Dobrindt, photographer
+        </div>
+        
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script type="text/javascript" src="/static/bootstrap-2.3.2/js/bootstrap.min.js"></script>
+        <script src="/static/js/global.js"></script>
+        {% block js %}{% endblock %}
+    </body>
+</html>

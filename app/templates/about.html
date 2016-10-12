@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block sortby %}
+<div id="sort-by" style="">
+</div>
+{% endblock %}
+
+
+{% block main %}
+
+<div id="gridContainer" class="normal-page">
+
+<div class="row-fluid" xmlns="http://www.w3.org/1999/html">
+<div class="span8">
+    <div id="postContainer" class="content-page">
+        <div class="post-headline">{{ page.title }}</div>
+
+        <div class="post-content">
+            <br/>
+            {{ page.content | safe }}
+            <!--<p>
+                <br />
+
+                WriteHere came about because I was frustrated that there was no place to express myself, to share written opinions and ideas, that would actually be read by more than a handful of people.
+                <br /><br />
+                Sure, there are plenty of places to express yourself on the web. Having a blog is great, but only a small percentage of them are read by more than family and friends. The blogs that have a genuine, large readership are usually professional rather than recreational - online 'magazine-style' publishers or individuals working full-time at writing and sourcing content. Both types are money-making exercises, with ads and/or sponsored posts sustaining them. But what if writing is not your full-time job?
+                <br /><br />
+                YouTube opened a whole new world of possibilities for self expression, and a truly captivating way to be entertained and informed. However, I'm a writer, not a budding cinematographer.
+                <br /><br />
+                Facebook is amazing, in pretty much every way, but it's not a place to post lengthy opinions and discuss issues in depth.
+                <br /><br />
+                Lately, a few more options have come online. You can put your experience and expertise to use by answering questions on Quora or Stack Exchange. That's really interesting and helpful. But your expression is (well, should be) limited to the questions being asked.
+                <br /><br />
+                If you're in the right crowd, you might be accepted to join a conversation on Branch, or contribute a thought piece on Medium or Svbtle.
+                <br /><br />
+                And, of course, there's Twitter. I love Twitter. I love how it works, and what it enables. It's given a voice to hundreds of millions of people and facilitated the spread a lot of useful information and good ideas. Although Twitter falls short in one important aspect - it's not long enough.
+                <br /><br />
+                If you're genuinely interested in a topic, to the extent where you have something to share with the world (by that I mean your own thoughts, not just a link to someone else's), I bet you have far more than 140 characters to say about it. And you're probably looking to spread your thoughts and insights way beyond your immediate circle of family, friends and followers.
+                <br /><br />
+                That's where a hosting/sharing platform like WriteHere comes in. It's designed to be a virtual Speakers' Corner for the Internet; a soapbox on which passionate people can stand and address a global audience. (I humbly acknowledge the optimism of that statement - there is no global audience yet. All in good time.)
+                <br /><br />
+                It's also a forum where comment and exchange enable others to share their opinions, observations and insights.
+                <br /><br />
+                And because it's an interaction the opinions you express, the news and info you share, are not here just to be broadcast and read, they are here to evolve and grow.
+                <br /><br />
+                I pursued development of WriteHere, through various trials, setbacks and crises of confidence, driven by a humble aim: to change the way the world shares opinions and information.
+                <br /><br />
+                It's my hope that if we can collect our thoughts, gather the spectrum of ideas and inspirations, and bring people together, we might even make a few other changes along the way.
+                <br /><br />
+                If you're reading this, then you're probably the kind of person who will read some of the writing on the site. I certainly hope so.
+                <br /><br />
+                If you're also the kind of person who likes to contribute your own opinions, observations and insights about issues and events you care about, I hope you'll contribute a post, or two.
+                <br /><br />
+
+            </p>
+
+            <p>
+                <b>About Us</b><br /><br />
+
+
+                I have to begin with a confession: there is no 'us'. It's just me.
+                <br /><br />
+                I'm not famous for being among the first 19 employees at Apple.<br />
+                I've never worked at Google. Or Twitter. Or Facebook. And I was never in the room when someone had the idea for a killer iApp.
+                <br /><br />
+                I've never had millions thrown at me by Angels. Or VCs. Or anybody else.
+                <br /><br />
+                And I don't throw fabulous office parties that appeal to, and appall the readers of Business Insider in equal measure. Well, not any more.
+                <br /><br />
+                Worst of all, I have very limited technical knowledge. I'm picking up snippets as I go, but if there's one thing I do know, it's that I have a lot to learn. I can't even claim to have a Computer Science degree, from anywhere.
+                <br /><br />
+                Quite frankly, in tech terms, I'm a nobody, in the middle of nowhere, quietly toiling away trying to establish a platform that gets people writing and sharing opinions, news and information.
+                <br /><br />
+                All this adds up to one, unavoidable conclusion - I'm exactly the kind of guy that should not be trying to create a hosting/sharing/discussion platform. Which is precisely why I am.
+                <br /><br />
+                We all use these tools, they affect all of us, and they will play a huge role in how our kids will interact in the future. We should all have a hand in creating and shaping them, so they grow to reflect all of us, not a mere few of us.
+                <br /><br />
+                I have, however, received a lot of sage advice from many smart people who were very generous with their time and willing to share their knowledge - Adrian Barrow, Brad Jakeman, George Feinn, three very sophisticated Barbarians - Sophie Kelly, Colin Nagy and Kristin Maverick - Nik Vaish, James Martignoni, David Cherry, Jayson Elliot, Andy Hamilton, Leon Parore, Ben Young, Duncan Shand, Bain Hollister, Haydn Thomsen, Tarver Graham, Ken Vu, Phil Veal, Paul Cameron, Greg Sitters, Paul Adams, Antonio Navas, Nathan Cooper and Nicola Bell.
+                <br /><br />
+                These people offered me the two things every person struggling to turn an idea into reality desperately needs – honesty and encouragement. I owe them more thanks than I can give.
+                <br /><br />
+                I received generous design help from my good friend, young Adrienne Matlosz. For those of you with a critical eye, the amateur design elements on the site are my fault.
+                <br /><br />
+                Finally, thanks to Josh Purvis - developer, sounding board, critic, advisor, and patient supporter. Without Josh, I might be trying to make videos for YouTube.
+                <br /><br />
+                If you'd like to let me know your thoughts, good or bad, about WriteHere, I'd love to hear from you. I promise to write back.
+                <br /><br />
+                - Cameron<br />
+                <a href="mailto:cameron@writehere.com">cameron@writehere.com</a>
+
+            </p>-->
+
+        </div>
+    </div>
+</div>
+<div class="span1"></div>
+
+<div class="span3">
+    <div id="rightColumnGuidelines">
+
+        <div class="general-blue-box grid-item" style="float:none !important; margin-left: auto; margin-right: auto; margin-top: 30px;">
+            <div class="well" >
+                <span class="twenty">Flag it, please</span>
+                <br/><br/>
+                <div>
+                    If you find content that you believe violates our User Guidelines please report it.<br /><br /> You can submit
+                    content for review by using the "Flag" drop down menu that appears on all Opinion Pages and Comment
+                    Windows.
+                </div>
+            </div>
+        </div>
+
+        <div class="general-blue-box grid-item" style="float:none !important; margin-left: auto; margin-right: auto; margin-top: 30px;">
+            <div class="well" >
+                <span class="twenty">FAQ</span>
+                <br/><br/>
+                <div>
+                    We know you'll have some questions. We've tried to provide some <a href="{{url_for('general.faq')}}">answers</a> ahead of time.
+                </div>
+            </div>
+        </div>
+
+        <div class="general-blue-box grid-item" style="float:none !important; margin-left: auto; margin-right: auto; margin-top: 30px;">
+            <div class="well" >
+                <span class="twenty">Write to us</span>
+                <br/><br/>
+                <div>
+                    WriteHere is new, and we're working bloody hard to improve it. Please don't hesitate to let us know
+                    the things you like, and the things you don't. After all, your opinion is the only one that
+                    matters.<br /><br /> You can email us at <a href="mailto:feedback@writehere.com">feedback@writehere.com</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+{%- endblock %}
+

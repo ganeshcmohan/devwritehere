@@ -1,0 +1,37 @@
+{% extends 'email/email_base.html' %}
+
+{% block main %}
+
+    {% if html %}
+        <p>
+            <b>Welcome to WriteHere!</b><br /><br />
+
+            In order to verify your e-mail address, we ask that you click the link below:<br /><br />
+
+            <a href="{{ verification_link }}">CONFIRM YOUR EMAIL</a>
+            <br /><br />
+            If the link doesn't work, copy and paste this URL in to your browser:
+            <br />
+        </p>
+            {{ verification_link }}
+            <br /><br />
+        <p>
+            Thanks,<br />
+            WriteHere<br /><br />
+        </p>
+    {% else %}
+        Welcome to WriteHere!
+
+        In order to verify your e-mail address, we ask that you click the link below:
+
+        {{ verification_link }}
+
+        If the link doesn't work, copy and paste this URL in to your browser:
+
+        {{ verification_link }}
+
+        Thanks,
+        WriteHere
+    {% endif %}
+
+{% endblock %}

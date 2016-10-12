@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+
+{% from '_macros.html' import render_pagination %}
+
+{% block title %}: admin panel{% endblock %}
+
+{%- block head %}
+    <link href="{{ url_for('static', filename='css/datatables.bootstrap.css') }}" rel="stylesheet" />
+    <link href="/static/bootstrap-markdown/css/bootstrap-markdown.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.datatables.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/datatables.zeroclipboard.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/datatables.tabletools.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/datatables.bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.editable.js') }}"></script>
+    <script type="text/javascript" src="/static/bootstrap-markdown/js/markdown.js"></script>
+    <script type="text/javascript" src="/static/bootstrap-markdown/js/to-markdown.js"></script>
+    <script type="text/javascript" src="/static/bootstrap-markdown/js/bootstrap-markdown.js"></script>
+    <style type="text/css">
+    body {
+        background-color: white;
+        margin: 0px;
+    }
+    </style>
+{% endblock %}
+
+{%- block containers %}{% endblock %}
+
+{% block nav %}
+    <div class="navbar" id="navbarAdmin">
+        <div class="container">
+            <a class="navbar-brand" style="margin:3px; margin-bottom: -5px; " href="{{ url_for('index') }}"><i class="glyphicon glyphicon-home" ></i></a>
+            <ul class="nav">
+                {%- for endpoint, caption, icon in [
+                    ('admin.admin_index', 'Summary', 'icon-th'),
+                    ('admin.users', 'Users', 'icon-user'),
+                    ('admin.opinions', 'Opinions', 'icon-edit'),
+                    ('admin.comments', 'Comments', 'icon-comment'),
+                    ('admin.topics', 'Topics', 'icon-tags'),
+                    ('admin.admin_pages', 'Pages', 'icon-file'),
+                    ('admin.admin_email', 'Email Accounts', ' icon-folder-open'),
+
+                ] %}
+                    <li class="{% if endpoint == request.endpoint %}active{% endif %}"><a href="{{ url_for(endpoint) }}"><i class="{{ icon }}"></i> {{ caption }}</a></li>
+                {%- endfor %}
+            </ul>
+            <ul class="nav pull-right">
+                <li><a href="{{ url_for('security.logout') }}"><i class="glyphicon glyphicon-off"></i> Logout</a></li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{%- block main %}{% endblock %}
+
+
+{%- block scripts %}
+
+    <script type="text/x-tmpl" id="confirmFooterTemplate">
+        <div id="confirmFooter">
+            <a href="#" onclick="<%=proceed%>" class="btn btn-xs">Yes</a>
+            <a href="#" onclick="<%=close%>" class="btn btn-xs">No</a>
+        </div>
+    </script>
+
+    <div id="editUserModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editUserLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+            <h3 id="editUserLabel">Edit User Information</h3>
+        </div>
+        <div class="modal-body">
+            <p></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary save-user">Save changes</button>
+        </div>
+    </div>
+
+    <div id="editOpinionModal" class="container modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editOpinionLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+            <h3 id="editOpinionLabel">Edit Opinion Information</h3>
+        </div>
+        <div class="modal-body">
+            <p></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary save-opinion">Save changes</button>
+        </div>
+    </div>
+
+    <div id="editTopicModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="editTopicLabel" aria-hidden="true">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+            <h3 id="editTopicLabel">Edit Topic Information</h3>
+        </div>
+        <div class="modal-body">
+            <p></p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
+            <button class="btn btn-primary save-topic">Save changes</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var adminDataTable = {
+            "sDom": "<'row'<'col-md-6'T><'col-md-6'f>r>t<'row'<'col-md-6'i><'col-md-6'p>>",
+            "sPaginationType": "bootstrap",
+            "oTableTools": {
+                "aButtons": [
+                    "copy",
+                    "print",
+                    "csv",
+                    "pdf"
+                ],
+                "sSwfPath": "/static/swf/copy_csv_xls_pdf.swf"
+            },
+            "iDisplayLength": 50,
+            "aaSorting": [[1]],
+            "bPaginate": false,
+            "bFilter": false,
+        };
+
+        $.validator.setDefaults({
+            showErrors: function (errorMap, errorList) {
+                this.defaultShowErrors();
+
+                // destroy tooltips on valid elements
+                $("." + this.settings.validClass).tooltip("destroy");
+
+                // add/update tooltips
+                for (var i = 0; i < errorList.length; i++) {
+                    var error = errorList[i];
+
+                    $("#" + error.element.id)
+                            .tooltip({ trigger: "focus" })
+                            .attr("data-original-title", error.message)
+                }
+            },
+            errorPlacement: function(error, element) { }
+        });
+
+        var saveForm = function(formSelector, modalSelector, modalErrorSelector) {
+            $(formSelector).ajaxSubmit({
+                'success': function(data) {
+
+                    if (data['result'] === true) {
+                        $(modalSelector).modal('hide');
+                        window.location.reload(true);
+                    }
+                    if (data['result'] === false && data['reason'] === 'existing') {
+                        $(modalErrorSelector).html(data['message']);
+                        $(modalErrorSelector).addClass('error');
+                        $(modalErrorSelector).show();
+                    }
+                    /*if (data['result'] === false && data['reason'] === 'form_errors') {
+                        $(modalErrorSelector).html();
+                        var invalidFields = data['invalid_fields'];
+                        $.each(invalidFields, function(field, errors) {
+                            $.each(errors, function(index, error_message){
+
+                            });
+                        });
+
+                    }*/
+                },
+                'error': function(data) {
+                    $(modalErrorSelector).html(data['message']);
+                    $(modalErrorSelector).show();
+                }
+            });
+        }
+
+        $(function() {
+
+            $('body').on('hidden', '.modal', function () {
+                $(this).removeData('modal');
+            });
+
+            /* edit user event */
+            $('.edit-user').live('click', function() {
+                var userId = $(this).attr('data-user_id');
+                var timestamp = new Date().getTime();
+                $('#editUserModal').modal({
+                    'remote': '/admin/users/form?user_id='+userId+'&t='+timestamp
+                });
+                $('#editUserModal').modal('show');
+                return false;
+            });
+
+            $('#editUserForm').live('keypress', function(e) {
+                if (e.which == 13) {
+                    saveForm('#editUserForm', '#editUserModal');
+                    return false;   
+                }
+            });
+
+            $('.save-user').live('click', function() {
+                saveForm('#editUserForm', '#editUserModal');
+                return false;
+            });
+
+            /* edit opinion event */
+            $('.edit-opinion').live('click', function() {
+                var opinionId = $(this).attr('data-opinion_id');
+                var timestamp = new Date().getTime();
+                $('#editOpinionModal').modal({
+                    'remote': '/admin/opinions/form?opinion_id='+opinionId+'&t='+timestamp
+                });
+                $('#editOpinionModal').show();
+                $('#editOpinionError').hide();
+                return false;
+            });
+
+            $('#editOpinionForm').live('keypress', function(e) {
+                if (e.which == 13) {
+                    saveForm('#editOpinionForm', '#editOpinionModal', '#editOpinionError');
+                    return false;    
+                }
+            });
+
+            $('.save-opinion').live('click', function() {
+                saveForm('#editOpinionForm', '#editOpinionModal', '#editOpinionError');
+                return false;
+            });
+
+            /* edit topic event */
+            $('.edit-topic').live('click', function() {
+                var topicId = $(this).attr('data-topic_id');
+                var timestamp = new Date().getTime();
+                $('#editTopicModal').modal({
+                    'remote': '/admin/topics/form?topic_id='+topicId+'&t='+timestamp
+                });
+                $('#editTopicModal').modal('show');
+                $('#editTopicError').hide();
+                return false;
+            });
+
+            $('#editTopicForm').live('keypress', function(e) {
+                if (e.which == 13) {
+                    saveForm('#editTopicForm', '#editTopicModal', '#editTopicError');
+                    return false;    
+                }
+            });
+
+            $('.save-topic').live('click', function() {
+                saveForm('#editTopicForm', '#editTopicModal', '#editTopicError');
+                return false;
+            });
+
+
+            $("[rel=tooltip]").tooltip();
+
+            $('.btn-danger').live('click', function() {
+                return confirm('Are you sure?');
+            });
+        });
+    </script>
+{% endblock %}

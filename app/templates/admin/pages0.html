@@ -1,0 +1,53 @@
+{% extends 'admin/admin_base.html' %}
+
+
+{%- block main %}
+        <script type="text/javascript" src="{{ url_for('static', filename='js/tiny_mce/tiny_mce.js') }}"></script>
+
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul class="nav nav-tabs">
+                {%- for endpoint, caption, slug in [
+                ('admin.admin_pages', 'About', 'about'),
+                ('admin.admin_pages', 'FAQ', 'faq'),
+                ('admin.admin_pages', 'Guidelines', 'guidelines'),
+                ] %}
+                <li class="{% if slug == current_slug %}active{% endif %}"><a href="{{ url_for(endpoint, slug=slug) }}">{{ caption }}</a></li>
+                {%- endfor %}
+            </ul>
+
+            {% include 'admin/pages_form.html' %}
+
+        </div>
+    </div>
+
+</div>
+
+
+<script type="text/javascript">
+    $(function() {
+        $("input[rel=tooltip]").tooltip();
+
+        // Initialize TinyMCE with the new plugin and listbox
+        tinyMCE.init({
+            plugins : '-example', // - tells TinyMCE to skip the loading of the plugin
+            mode : "textareas",
+            theme : "advanced",
+            theme_advanced_buttons1 : "mylistbox,mysplitbutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,link,unlink",
+            theme_advanced_buttons2 : "",
+            theme_advanced_buttons3 : "",
+            theme_advanced_toolbar_location : "top",
+            theme_advanced_toolbar_align : "left",
+            theme_advanced_statusbar_location : "bottom",
+            content_css : "{{ url_for('static', filename='js/tiny_mce/content.css') }}",
+            valid_styles : { '*' : 'font-weight, text-decoration' },
+            relative_urls : false
+        });
+    });
+</script>
+
+{% endblock %}
+

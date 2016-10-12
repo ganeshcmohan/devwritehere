@@ -1,0 +1,19 @@
+<script type="text/x-tmpl" id="welcomeLoginTemplate">
+<div class="well" id="loginWindow">
+    <a href="#" class="close" onclick="$(this).parent().hide(); return false;">&times;</a>
+    <div id="loginLogo">
+        <img src="{{ url_for('static', filename='img/write-here-logo-370.png') }}" />
+    </div>
+
+    <div id="loginWelcomeMessage">
+        <div>
+            You are welcome to read as many opinions and comments as you like.<br /><br />
+            Registered users can write opinions and make comments.
+        </div>
+        <br/>
+        <a href="#" class="well-small blue-button login-live-button"  id="loginLiveButton" onclick="return false;">Sign in</a>
+        <a href="#" class="well-small blue-button create-live-button"  id="createLiveButton" onclick="return false;">Create Account</a>
+    </div>
+
+</div>
+</script>

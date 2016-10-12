@@ -1,0 +1,27 @@
+{% extends 'my_page.html' %}
+
+{% block my_page_content %}
+
+<div id="gridContainer">
+    {% for writer in objs %}
+    {% include 'writer_grid.html' %}
+    {% endfor %}
+</div>
+{% endblock my_page_content %}
+
+{% block js %}
+{{ super() }}
+<script type="text/javascript">
+$('#gridContainer').isotope({
+    itemSelector : '.grid-item',
+    columnWidth: 250,
+    layoutMode: 'masonry',
+    isAnimated: true,
+    animationOptions: {
+    duration: 100,
+            easing: 'linear',
+            queue: true
+    }
+});
+</script>
+{% endblock js %}

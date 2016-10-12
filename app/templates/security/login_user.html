@@ -1,0 +1,15 @@
+{% from '_macros.html' import render_field2, raw_field, social_login_icon %}
+{% extends 'security/base.html' %}
+{% block content %}
+<h3>sign in:</h3>
+<form class="form landing-form" action="{{ url_for('security.login') }}" method="POST">
+    {{ login_user_form.hidden_tag() }}
+    {{ render_field2(login_user_form.email, class_="required text-field", placeholder="email") }}
+    {{ render_field2(login_user_form.password, class_="required text-field", placeholder="password") }}
+    <label label-default class="checkbox">
+        {{ login_user_form.remember()|safe }}remember me/
+        <a data-toggle='modal' href="#mdl_forgot_password">forgot password?</a>
+    </label>
+    <button id="signin" class="btn btn-landing btn-primary btn-wh" type="submit" class="">sign in</button>
+</form>
+{% endblock %}

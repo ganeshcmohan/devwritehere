@@ -1,0 +1,28 @@
+{% from '_macros.html' import raw_field, social_login_icon %}
+
+{% extends 'mdl_landing_base.html' %}
+
+{% block mdl_id %}mdl_create{% endblock %}
+
+{% block mdl_content %}
+<div class="well">
+<p class='modal-headline'>join our community of writers:</p>
+<form action="{{ url_for('account.register', provider_id=provider.id if provider else None) }}" 
+    class="form modal-landing-form" method="POST" id="createPopupForm">
+    {{ register_user_form.hidden_tag() }}
+    {{ raw_field(register_user_form.display_name, class_="required create-field", placeholder="name") }}
+    {{ raw_field(register_user_form.email, class_="required create-field", placeholder="email") }}
+    {{ raw_field(register_user_form.password, class_="required create-field", placeholder="password") }}
+    {{ raw_field(register_user_form.confirm, class_="required create-field", placeholder="confirm your password") }}
+    <label class="checkbox">
+        <input name="terms" type="checkbox"/> 
+        I agree to the 
+        <a href="{{ url_for('general.guidelines') }}">user guidelines.</a>
+    </label>
+    <button class="btn btn-primary" id="btn-create-my-profile"
+        onclick="$('#mdl_create').modal('hide');"
+        type="submit">create my profile</button>
+</form>
+<div class="clearfix"></div>
+</div>
+{% endblock %}

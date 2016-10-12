@@ -1,0 +1,27 @@
+{% extends 'mdl_landing_base.html' %}
+
+{% block mdl_id %}mdl_login{% endblock %}
+
+{% block mdl_verb %}sign in{% endblock %}
+
+{% block mdl_content %}
+<div class="well">
+<p class='modal-headline'>sign in:</p>
+<form id="modal-login-form" class="form modal-landing-form" 
+    action="{{ url_for('security.login') }}" method="POST">
+    {{ login_user_form.hidden_tag() }}
+    <input name="email" type="email" placeholder="email"/>
+    <input name="password" type="password" placeholder="password"/> 
+    <label class="checkbox">
+        <input name="remember" type="checkbox"/> 
+        remember me/<a data-toggle='modal'
+            onclick = '$("#mdl_login").modal("hide");return false;'
+            href="#mdl_forgot_password">forgot password?</a>
+    </label>
+    <button class="btn btn-primary btn-wh pull-right" 
+        onclick="$('#mdl_login').modal('hide');"
+        type="submit">sign in</button>
+</form>
+<div class="clearfix"></div>
+</div>
+{% endblock %}

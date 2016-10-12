@@ -1,0 +1,17 @@
+{% from '_macros.html' import grid %}
+{% extends 'index.html' %}
+
+{% block head %}
+    {{ super() }}
+
+    <meta property="og:image" content="http://writehere.com/static/img/wh-128.jpg"/>
+    <meta itemprop="image" content="http://writehere.com/static/img/wh-128.jpg" />
+    <meta name="twitter:image" content="http://writehere.com/static/img/wh-128.jpg" />
+    <meta property="og:title" content="WriteHere.com - {{ topic.topic }}" />
+    <meta property="og:description" content="Have an opinion on {{ topic.topic }}? See what others are saying and join the discussion." />
+
+{% endblock %}
+
+{% block load_grid %}
+writehere.loadGeneric('#gridContainer', '/json/topic/grid', '{{topic.id}}', true, sort, writers);
+{% endblock %}

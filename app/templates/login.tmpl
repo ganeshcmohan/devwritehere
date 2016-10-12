@@ -1,0 +1,45 @@
+{% from '_macros.html' import raw_field, social_login_icon %}
+<script type="text/x-tmpl" id="loginTemplate">
+    <div class="well" id="loginWindow">
+        <a href="#" class="close" onclick="$(this).parent().hide(); return false;">&times;</a>
+        <div id="loginLogo">
+            <img src="{{ url_for('static', filename='img/write-here-logo-370.png') }}" />
+        </div>
+        <div id="loginSocial">
+            <span class="twenty" style="font-face: bold; margin-top: 20px;">Sign in:</span>
+            <span class="social-icon-row">
+                <span class="social-icon social-icon-alpha">{{ social_login_icon('facebook', 'Facebook', url_for('static', filename='img/social/48_social_facebook.png')) }}</span>
+                <span class="social-icon">{{ social_login_icon('twitter', 'Twitter', url_for('static', filename='img/social/48_social_twitter.png')) }}</span>
+                <span class="social-icon">{{ social_login_icon('google', 'Google', url_for('static', filename='img/social/48_social_google.png')) }}</span>
+                <span class="social-icon">{{ social_login_icon('linkedin', 'Linked In', url_for('static', filename='img/social/48_social_linkedin.png')) }}</span>
+            </span>
+            <div class="eleven" style="margin-top: 15px; margin-right: 10px;">Use your social media account to ensure the opinions you post are publicized to your networks.</div>
+        </div>
+        <div style="height: 1px; background-color: #eee; text-align: center; margin-top: 30px;">
+          <span style="background-color: white; position: relative; top: -0.7em; font-weight: bold; font-size: 14px;">
+            &nbsp;&nbsp;or&nbsp;&nbsp;
+          </span>
+        </div>
+        <div id="loginEmail">
+            <span class="twenty pull-left" style="font-face: bold;margin-top:15px;">Sign in:</span>
+            <div class="pull-left" style="margin-left: 47px;">
+            <form action="{{ url_for('security.login') }}" method="POST" style="display:inline-block;" id="loginPopupForm">
+                {{ login_user_form.hidden_tag() }}
+
+                {{ raw_field(login_user_form.email, class_="login-field", placeholder="Email") }}<br />
+                {{ raw_field(login_user_form.password, class_="login-field", placeholder="Password") }}
+                <input type="hidden" name="remember" value="y" />
+
+                <div class="clearfix" style="display: block;"></div>
+                <div class="pull-left" style="margin-top: 20px; width: 90px;">
+                    <input type="submit" class="well-small blue-button" style="position: absolute; width:90px;" value="Login">
+                </div>
+                <div class="pull-left" style="margin-top: 30px; margin-left: 20px">
+                    <a href="#" class="forgot-password">I forgot my password. Please Help!</a>
+                </div>
+                <!--<input type="submit" name="submit" style="width:1px; height:1px; visibility: hidden; display:inline;" />-->
+            </form>
+            </div>
+        </div>
+    </div>
+</script>

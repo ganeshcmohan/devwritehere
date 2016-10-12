@@ -1,0 +1,86 @@
+<script type="text/x-tmpl" id="gridItemTemplate">
+    <div class="grid-item <%=hover_edit%>"
+         data-sort_by_name="<%=headline%>"
+         data-sort_by_comments="<%=comments%>"
+         data-sort_by_views="<%=views%>"
+         data-sort_by_latest="<%=timestamp%>"
+         data-sort_by_shares="<%=shares%>"
+         data-sort_by_weight="1">
+            <div>
+            <div style="margin-top: -4px; margin-bottom:10px;">
+                <% if (is_draft) { %>
+                    <a class="btn btn-mini login-required" href="<%=opinion_update_url%>">Draft</a>
+                <% } %>
+                <% if (is_spam) { %>
+                    <span class="label label-important">suspended</span>
+                <% } %>
+            </div>
+
+
+            <div class="hover-controls hide">
+                <a class="btn btn-mini login-required" 
+                    href="<%=opinion_update_url%>">Update</a>
+                <a class="btn btn-mini login-required confirm-delete-opinion" 
+                    href="<%=opinion_delete_url%>" data-opinion_id="<%=opinion_id%>">Delete</a>
+            </div>
+            <% if (photo_url !== null) { %>
+                
+                <% if (photo_orientation == 'vertical') { %>
+                <div class="grid-img-container">
+                    <a class="pjax" href="<%=opinion_url%>"><img src="<%=photo_url%>" width="245" height="338" class="opinion-img" /></a>
+                </div>
+                <% } else { %>
+                <div class="grid-img-container">
+                    <a class="pjax" href="<%=opinion_url%>"><img src="<%=photo_url%>" width="245" height="184" class="opinion-img" /></a>
+                </div>
+                <div >
+                    <h1 class="grid-header"><a class="pjax" href="<%=opinion_url%>"><span><%=headline%></span></a></h1>
+                </div>
+                <% } %>
+            <% } else { %>
+                <div >
+                    <a href="<%=opinion_url%>" ><h1 class="grid-header"><%=headline%></h1></a></div>
+            <% } %>
+
+           
+
+                <div class="grid-text-container" >
+                    <a  href="<%=opinion_url%>" class="pjax clickable opinion-black-link">
+                        <p>
+                            <%=extract%>
+                            
+                        </p>
+                        <p> 
+                        <a class="link_click" href="<%=opinion_my_page_url%>">by  <%=opinion_my_page%></a>
+                        </p>
+                    </a>
+                   <% if (topic_count > 0) { %>
+                    <div class="opinion-topic-list">
+                        
+                        <% _.each(_.initial(topic_list), function(topic) { %>
+                            <a href="<%=topic.url%>">#<%=topic.name%></a>,
+                        <% }); %>
+                        <a href="<%=_.last(topic_list).url%>">#<%=_.last(topic_list).name%></a>
+                    </div>
+                    <% } %>
+                    <div class="opinion-stats">
+                        <% if (views > 0) {  %>
+                            <%=views%>&nbsp;<i class="fa fa-eye" aria-hidden="true"></i> 
+                        <% } %>
+
+                        <% if (comments > 0) { %>
+                           | <%=comments%> &nbsp; <i class="fa fa-commenting-o" aria-hidden="true"></i> 
+                        <% } %>
+
+                        <% if (shares > 0) { %>
+                            | <%=shares%> Shares <i class="fa fa-share-alt" aria-hidden="true"></i> 
+                        <% } %>
+                    </div>
+                 </div>
+
+          
+
+            
+        </div>
+    </div>
+</script>

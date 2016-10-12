@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% from '_macros.html' import social_share_bar %}
+
+{%-block title%}: {{post.headline}}{% endblock %}
+
+{% block head %}
+{{ super() }}
+<meta property="og:image" content="http://writehere.com{{ post.photo_url_external }}"/>
+<meta itemprop="image" content="http://writehere.com{{ post.photo_url_external }}" />
+<meta name="twitter:image" content="http://writehere.com{{ post.photo_url_external }}" />
+<meta property="og:title" content="{{ post.headline }}" />
+<meta property="og:description" content="Recommended reading on WriteHere: {{ post.headline }} - {{ post.short_url }}" />
+{% endblock head %}
+
+{% block main %}
+    {% include 'post_inc.html' %}
+{%- endblock %}

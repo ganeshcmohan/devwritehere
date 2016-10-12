@@ -1,0 +1,34 @@
+<div id="mdl_login_simple" 
+    class="modal fade" role="dialog">
+    <div class="modal-content">
+        <a href="#close" title="Close" class="close-btn" data-dismiss="modal">x</a>
+    <div class="modal-body">
+        
+        <div class="mdl_content_simple">
+        <h2 class="md-signin-header">join our community of writers: </h2>
+        <form id="modal-login-form" class="form modal-landing-form" 
+            action="{{ url_for('security.login') }}" method="POST">
+            {{ login_user_form.hidden_tag() }}
+            <div class="form-group-basic">
+            <input class="simple form-control-basic" name="email" type="email" placeholder="email"/>
+        </div>
+        <div class="form-group-basic">
+            <input class="simple form-control-basic" name="password" type="password" placeholder="password"/> 
+        </div>
+         <div class="checkbox">
+            <label class="form-control-cb-basic">
+                <input name="remember" type="checkbox"/> remember me<!--/
+                <a data-toggle='modal' onclick = '$("#mdl_login_simple").modal("hide");return false;' href="#mdl_forgot_password">forgot password?</a>-->
+            </label>
+        
+            <button class="create-button" 
+                onclick="$('#mdl_login_simple').modal('hide');"
+                type="submit">sign in</button>
+                </div>
+        </form>
+        <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+</div>
+

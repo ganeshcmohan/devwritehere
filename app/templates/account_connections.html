@@ -1,0 +1,173 @@
+{% extends 'account_base.html' %}
+
+{% macro social_icon(provider_id, display_name, conn, icon, linked) %}
+    <span class="account-connection-icons">
+        {% if conn %}
+
+            {% if linked %}
+                <form action="/disconnect/{{provider_id}}" method="GET">
+                    <input type="image" src="{{ icon }}" value="Remove connection to {{ display_name }}" rel="tooltip" title="Disconnect {{ display_name }} from your account." />
+                </form>
+            {% else %}
+                <img src="{{ icon }}" rel="tooltip" title="You can login with your {{ display_name }} account!" />
+            {% endif %}
+        {% else %}
+            <form action="/login/{{provider_id}}" method="GET">
+                <input type="image" src="{{ icon }}" value="Connect account to {{ display_name }}" rel="tooltip" title="Connect {{display_name}} to your account." />
+            </form>
+        {% endif %}
+
+    </span>
+{% endmacro %}
+
+{% macro social_icon_live(provider_id, display_name, conn, icon) %}
+    <span class="account-connection-icons-no-pad" style="{% if provider_id == 'linkedin' %}margin-right: 0;{%endif%}">
+        <form action="/disconnect/{{provider_id}}" method="GET">
+            <input type="image" style="margin:0" src="{{ icon }}" value="Remove connection to {{ display_name }}" rel="tooltip" title="Disconnect {{ display_name }} from your account." />
+        </form>
+    </span>
+{% endmacro %}
+
+{% block title %}: social connections{% endblock %}
+
+{% block content %}
+
+    <div style="margin:20px;">
+        <div>
+            <p class="social-text pull-left">
+            Don't keep your opinions to yourself. Connect your social networks and you will have 
+           
+            the option to automatically share your new opinions with your friends and followers.
+            </p>
+        </div>
+        <div class="clearfix"></div><br/>
+
+        <div>
+        <h3 class="social_conn_header">you have connected:</h3>
+
+        {% if user.has_facebook %}
+            {{ social_icon('facebook', 'Facebook', facebook, url_for('static', filename='img/social/fb-21.png', linked=False)) }}
+        {% endif %}
+
+        {% if user.has_twitter %}
+            {{ social_icon('twitter', 'Twitter', twitter, url_for('static', filename='img/social/tw-21.png', linked=False)) }}
+        {% endif %}
+
+        {% if user.has_google %}
+            {{ social_icon('google', 'Google', google, url_for('static', filename='img/social/gp-21.png', linked=False)) }}
+        {% endif %}
+
+        {% if user.has_linkedin %}
+            {{ social_icon('linkedin', 'LinkedIn', linkedin, url_for('static', filename='img/social/lin-21.png', linked=False)) }}
+        {% endif %}
+
+        </div>
+
+        {% if not user.has_facebook or not user.has_twitter or not user.has_google or not user.has_linkedin %}
+        <div class="clearfix"></div><br/>
+        <div>
+            <span class="social_conn_header pull-left" style="margin-top: 10px;margin-right:10px">connect now:</span>
+
+            {% if not user.has_facebook %}
+                {{ social_icon('facebook', 'Facebook', facebook, url_for('static', filename='img/social/fb-21.png', linked=True)) }}
+            {% endif %}
+
+            {% if not user.has_twitter %}
+                {{ social_icon('twitter', 'Twitter', twitter, url_for('static', filename='img/social/tw-21.png', linked=True)) }}
+            {% endif %}
+
+            {% if not user.has_google %}
+                {{ social_icon('google', 'Google', google, url_for('static', filename='img/social/gp-21.png', linked=True)) }}
+            {% endif %}
+
+            {% if not user.has_linkedin %}
+                {{ social_icon('linkedin', 'LinkedIn', linkedin, url_for('static', filename='img/social/lin-21.png', linked=True)) }}
+            {% endif %}
+
+        </div>
+        {% endif %}
+
+        <div class="clearfix"></div><br/>
+        <div>
+            <span class="disconnect-connection pull-left">
+                <a href="#" >disconnect</a> a social network 
+            </span>
+        </div>
+
+    </div>
+
+    <div id="loginContainer"></div>
+    <script type="text/x-tmpl" id="disconnectTemplate">
+        <div class="well disconnect" id="loginWindow">
+            <button class="close close-circle" onclick="$(this).parent().hide(); return false;">&times;</button>
+            <div style="width:100%; text-align: center; margin-top: 30px">
+
+
+               <div style="width: 70%; margin-top:20px; margin-left:auto; margin-right: auto;text-align: left;">
+                   <span class="disconnect-text" style="font-face: bold; margin-top: 30px; padding-bottom: 30px;  ">Select a network to disconnect:</span>
+
+                   <div class="clearfix"></div>
+
+                    <div style="margin-top: 30px;">
+                    {% if user.has_facebook %}
+                    {{ social_icon_live('facebook', 'Facebook', facebook, url_for('static', filename='img/social/fb-21.png')) }}
+                    {% endif %}
+
+                    {% if user.has_twitter %}
+                    {{ social_icon_live('twitter', 'Twitter', twitter, url_for('static', filename='img/social/tw-21.png')) }}
+                    {% endif %}
+
+                    {% if user.has_google %}
+                    {{ social_icon_live('google', 'Google', google, url_for('static', filename='img/social/gp-21.png')) }}
+                    {% endif %}
+
+                    {% if user.has_linkedin %}
+                    {{ social_icon_live('linkedin', 'LinkedIn', linkedin, url_for('static', filename='img/social/lin-21.png')) }}
+                    {% endif %}
+                    </div>
+
+               </div>
+            </div>
+        </div>
+    </script>
+
+    <script type="text/javascript">
+        $(function() {
+
+            $('.disconnect-connection').on('click', function() {
+                var templateContext = {}
+                var loginTemplate = _.template($('#disconnectTemplate').html());
+                var login = loginTemplate(templateContext);
+                var docHeight = $(document).height();
+                $("body").append("<div id='overlay'></div>");
+                $("#overlay")
+                        .height(docHeight)
+                        .css({
+                            'opacity' : 0.4,
+                            'position': 'absolute',
+                            'top': 0,
+                            'left': 0,
+                            'background-color': '#fff',
+                            'width': '100%',
+                            'z-index': 100
+                        });
+
+                /* stop scrolling while popup is visible */
+                $('body').addClass('stop-scrolling');
+                $('#loginContainer').live('hide', function() {
+                    $('#overlay').remove();
+                    $('body').removeClass('stop-scrolling');
+                    $(this).css({'display': 'none'});
+                });
+
+                $('#loginContainer').html(login);
+                $('#loginContainer').show();
+
+            });
+
+        });
+
+    </script>
+
+{% endblock %}
+

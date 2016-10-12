@@ -1,0 +1,41 @@
+
+<li id='navbar-sort' class="dropdown no-style">
+    <a q='latest' tabindex="-1" class="dropdown-toggle "
+        role="button" data-toggle="dropdown" href="#">most recent
+    </a>
+    <ul class="dropdown-menu wh-lightgray" role="menu">
+        <li class="hide"><a class="filter" href="#" q="latest">most recent</a></li>
+        <li><a class="filter" href="#" q="views">most popular</a></li>
+        <li><a class="filter" href="#" q="shares">most shared</a></li>
+    </ul>
+</li>
+
+<li id='navbar-topic' class="dropdown">
+<a q='{% if topic %}{{topic.slug}}{% endif %}'
+    tabindex="-1" class="dropdown-toggle" role="button" data-toggle="dropdown" href="#">
+        {% if topic %}{{topic.topic}}{% else %}all topics{% endif %}
+    </a>
+    <ul class="dropdown-menu wh-lightgray" style="width: 400px;" role="menu">
+        <li><a q='' href="/">all topics</a></li>
+        <div class="clearfix"></div>
+        {% for t in g.topics %}
+        <li><a q='{{t.slug}}' href="{{url_for('show_topic', slug=t.slug)}}">{{t.topic}}</a></li>
+        {% endfor %}
+    </ul>
+</li>
+
+<li id="navbar-writers" class="dropdown">
+  <a q='everybody' class="dropdown-toggle" tabindex="-1" data-toggle="dropdown" href="#">
+      by everybody
+  </a>
+  <ul class="ajax dropdown-menu wh-lightgray" role="menu" aria-labelledby="dLabel">
+    <li class="hide"><a class="filter" href="#" q='everybody'>by everybody</a></li>
+    <li>
+        {% if current_user.is_authenticated %}
+        <a class="filter" href="#" q='followed'>
+        {% else %}
+        <a tabindex="-1" href="#mdl_login_or_create" data-toggle="modal">
+        {% endif %}
+            by writers I follow</a></li>
+  </ul>
+</li>

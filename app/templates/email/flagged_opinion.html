@@ -1,0 +1,36 @@
+{% extends 'email/email_base.html' %}
+
+{% block main %}
+
+{% if html %}
+<p>
+
+    The following opinion was marked as {{flag}} by {{ user }}:<br /><br />
+
+    <b>Opinion:</b> <a href="{{ post.short_url }}">{{ post.headline }}</a> <br />
+    <b>Opinion Topics:</b>
+    {% for topic in post.topics %}
+    {{ topic.topic }}
+    {% if not loop.last %},{% endif %}
+    {% endfor %}<br /><br />
+
+    <a href="http://writehere.com/admin/opinions?flag={{flag}}">Go to Admin Area</a>
+
+    <br /><br />
+</p>
+{% else %}
+
+    The following opinion was marked as {{flag}} by {{ user }}:
+
+    {{ post.short_url }}
+
+    Opinion: {{ post.headline }}
+    Opinion Topics: {% for topic in post.topics %}
+        {{ topic.topic }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+
+    Go to admin area: http://writehere.com/admin/opinions?flag={{flag}}
+
+{% endif %}
+
+{% endblock %}

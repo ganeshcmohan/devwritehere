@@ -1,0 +1,34 @@
+{% extends 'account_base.html' %}
+{% from '_macros.html' import render_field2 %}
+
+{% block title %}: email{% endblock %}
+
+{% block content %}
+<h3>your email address:</h3>
+
+<br/>
+<p>
+Your current email address (not displayed on your profile page): {{ current_user.email }}
+</p>
+<br/>
+
+<p>
+If you wish to change your email address, you may do it here.  
+<br/>
+Then click to save and verify your new email.
+<br/>
+A verification link will be sent to the address you provide. 
+<br/>
+<b>You will need to complete this verification before you can write more opinions or make comments on WriteHere.</b>
+</p>
+
+<br/>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+    {{ render_field2(form.email, class_='required wide-field', placeholder='change email address') }}
+    <div class="actions">
+    <button type="submit" class="btn btn-primary pull-right">save and verify</button>
+    </div>
+</form>
+{% endblock %}

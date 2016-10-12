@@ -1,0 +1,118 @@
+<div class="post-text-container text-center"> 
+    <h1 class="post-header">{{ post.headline }}</h1>
+    <div class="author-info">
+    <a href="{{post.user.my_page_url}}">
+        {{ post.user.profile.display_name }}</a>,
+
+    {% if post.user.profile.location %}
+        <i class="fa fa-map-marker" aria-hidden="true"></i>&nbsp;{{ post.user.profile.location }} &nbsp;&nbsp;  <i class="fa fa-clock-o" aria-hidden="true"></i>{{ post.formatted_date }}
+    {% else %}
+        &nbsp;&nbsp;<i class="fa fa-clock-o" aria-hidden="true"></i>&nbsp;{{ post.formatted_date }}
+    {% endif %}
+
+    &nbsp;&nbsp;<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;{{ post.views }} views {% if post.comments %} &nbsp;&nbsp;<i class="fa fa-commenting-o" aria-hidden="true"></i>&nbsp;  {{ post.comments }} comments{% endif %}{% if post.shares %} &nbsp;&nbsp;<i class="fa fa-share-alt" aria-hidden="true"></i> &nbsp; {{post.shares}} shares{% endif %}
+
+    {% if post.user.id == user.id or user.is_super %}
+        <a href="{{ url_for('write.update_opinion', opinion_id=post.id) }}" class="login-required btn btn-mini" style="margin-left:10px; color: #69C" rel="tooltip" title="Update Opinion">Update</a>
+    {% endif %}
+</div>
+
+<div class="post-content">
+{% if post.photo %}
+<div id="postPhotoContainer" class="post-photo-container">
+    <img class="post-photo {{post.photo_orientation}}"
+        src="{{ url_for('media.post_photo', post_id=post.id) }}">
+    {% if post.photo_source %}
+    <div class='post-photo-source'><b>Source: </b>{{ post.photo_source }}</div>
+    {% endif %}
+</div>
+{% endif %}
+{{post.content|safe|unclean_breaks}}
+</div>
+<span id="commentDataContainer"></span>
+
+<div id="comment" data-html="true"></div>
+
+<!--<div class="addthis_sharing_toolbox"></div> -->
+
+{% if changed_comments %}
+<div id="comments-prior">
+<h3>comments prior to edit</h3>
+{% for comment in changed_comments %}
+<div class="comment-prior">
+    <div style="font-style: italic;" class="bg-blue says prior-extract">
+        "{{comment.extract | html_to_text }}"
+        <div class="prior-arrow"></div>
+    </div>
+    <div class="says border shadow">
+    {{comment.comment | html_to_text }} - 
+    <a href="{{ url_for('write.my_page', date_slug=comment.user.date_slug, display_name_slug=comment.user.display_name_slug) }}">
+        {{comment.user.profile.display_name}}
+    </a>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+</div>
+<!--
+<hr class='wh-gray under-post-headline'/>
+<div class="author-info">
+    <a class='blue' href="{{post.user.my_page_url}}">
+        {{ post.user.profile.display_name }}</a>,
+
+    {% if post.user.profile.location %}
+        {{ post.user.profile.location }} - {{ post.formatted_date }}
+    {% else %}
+        {{ post.formatted_date }}
+    {% endif %}
+</div>
+<div class="share-info">
+    ({{ post.views }} views {% if post.comments %} / {{ post.comments }} comments{% endif %}{% if post.shares %} / {{post.shares}} shares{% endif %})
+
+    {% if post.user.id == user.id or user.is_super %}
+        <a href="{{ url_for('write.update_opinion', opinion_id=post.id) }}" class="login-required btn btn-mini" style="margin-left:10px; color: #69C" rel="tooltip" title="Update Opinion">Update</a>
+    {% endif %}
+</div>
+
+<div class="post-content">
+{% if post.photo %}
+<div id="postPhotoContainer" class="post-photo-container pull-right">
+    <img class="post-photo {{post.photo_orientation}}"
+        src="{{ url_for('media.post_photo', post_id=post.id) }}">
+    {% if post.photo_source %}
+    <div class='post-photo-source'><b>Source: </b>{{ post.photo_source }}</div>
+    {% endif %}
+</div>
+{% endif %}
+{{post.content|safe|unclean_breaks}}
+</div>
+
+<span id="commentDataContainer"></span>
+
+<div id="comment" data-html="true"></div>
+
+ Go to www.addthis.com/dashboard to customize your tools 
+
+<div class="addthis_sharing_toolbox"></div>
+
+{% if changed_comments %}
+<div id="comments-prior">
+<h3>comments prior to edit</h3>
+{% for comment in changed_comments %}
+<div class="comment-prior">
+    <div style="font-style: italic;" class="bg-blue says prior-extract">
+        "{{comment.extract | html_to_text }}"
+        <div class="prior-arrow"></div>
+    </div>
+    <div class="says border shadow">
+    {{comment.comment | html_to_text }} - 
+    <a href="{{ url_for('write.my_page', date_slug=comment.user.date_slug, display_name_slug=comment.user.display_name_slug) }}">
+        {{comment.user.profile.display_name}}
+    </a>
+    </div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+-->

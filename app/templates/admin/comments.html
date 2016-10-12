@@ -1,0 +1,159 @@
+{% extends 'admin/admin_table.html' %}
+
+{% block table %}
+    {% if filter_type == 'opinion' %}
+        <h3>Manage Comments for Opinion: "<a href="#" class="edit-opinion" data-opinion_id="{{filtered.id}}">{{ filtered.headline }}</a>"</h3>
+    {% elif filter_type == 'user' %}
+        <h3>Manage Comments for User: "<a href="#" class="edit-user" data-user_id="{{filtered.id}}">{{ filtered.profile.display_name }}</a>"</h3>
+    {% elif filter_type == 'topic' %}
+        <h3>Manage Comments for Topic: "<a href="#" class="edit-topic" data-topic_id="{{filtered.id}}">{{ filtered.topic }}</a>"</h3>
+    {% elif filter_type == 'flag' %}
+        <h3>Manage Comments flagged as <b>"{{flag_type}}"</b></h3>
+    {% else %}
+        <h3>Manage Comments</h3>
+    {% endif %}
+
+    <table id="commentTable" class="table table-striped  table-bordered">
+
+        <thead>
+        <tr>
+            <td>Headline</td>
+            <td>Date Created</td>
+            <td>Commenter</td>
+            <td>Comment</td>
+            <td>Actions</td>
+            <td>Status Search (hidden)</td>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for comment in pager.objs %}
+        <tr>
+            <td>
+                <a href="{{ url_for('write.post', date_slug=comment.post.date_slug, post_slug=comment.post.slug) }}" target="_blank" rel="tooltip" title="View Opinion in New Window">{{ comment.post.headline }}</a>
+                <!--<a href="#" class="edit-opinion" data-opinion_id="{{comment.post.id}}">{{ comment.post.headline }}</a>
+                <a href="{{ url_for('write.post', date_slug=comment.post.date_slug, post_slug=comment.post.slug) }}" target="_blank" rel="tooltip" title="View Opinion in New Window"><i class="glyphicon glyphicon-search"></i></a>-->
+            </td>
+            <td>{{ comment.date_created|formatted_date }}</td>
+
+            <td>
+                {% if comment.user.profile %}
+                <a href="#" class="edit-user" data-user_id="{{comment.user.id}}">{{ comment.user.profile.display_name}}</a>
+                {% endif %}
+            </td>
+            <td class="break-word" style="max-width: 450px;">{{ comment.comment }}</td>
+            <td>
+                {% if comment.is_spam %}
+                    <a href="{{ url_for('admin.spam_flag_comment', comment_id=comment.id) }}" class="btn btn-xs btn-success" data-comment_id="{{comment.id}}">Re-publish</a>
+                {% else %}
+                    <a href="{{ url_for('admin.spam_flag_comment', comment_id=comment.id) }}" class="btn btn-xs btn-warning" data-comment_id="{{comment.id}}">Suspend</a>
+                {% endif %}
+                <a href="{{ url_for('admin.delete_comment', comment_id=comment.id) }}" class="delete-comment btn btn-xs btn-danger" data-opinion_id="{{comment.id}}">Delete</a>
+                {% if flag_type %}
+                    <a href="{{ url_for('admin.delete_flag_comment', comment_id=comment.id, flag_type=flag_type) }}" class="delete-flag btn btn-xs btn-info" data-comment_id="{{comment.id}}" data-flag_type="{{flag_type}}">Remove Flag</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if comment.is_spam %}
+                    spam
+                {% else %}
+                    ok
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+<div id="modalConfirmDeleteComment" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+        <h3>Delete Comment</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        Are you sure you want to delete this comment?
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="delete-confirmed btn btn-xs">Yes</a>
+        <a href="#" class="delete-cancelled btn btn-xs">No</a>
+    </div>
+</div>
+
+<div id="modalConfirmDeleteFlag" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+        <h3>Remove flag?</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        Are you sure you want to declassify this comment as {{flag_type}}?
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="delete-confirmed btn btn-xs">Yes</a>
+        <a href="#" class="delete-cancelled btn btn-xs">No</a>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+<script type="text/javascript">
+    $(function() {
+        var extendedDataTable = _.extend(adminDataTable, {
+            "aoColumnDefs": [
+                {"sWidth": "200px", "bSearchable": false, "aTargets": [ 4 ] }, // spam toggle
+                { "bVisible": false, "aTargets": [ 5 ] } // spam status
+            ]
+        });
+        $('#commentTable').dataTable(extendedDataTable);
+
+        $(".delete-comment").live({
+            click:
+                    function(e) {
+                        var url = $(e.target).attr('href');
+                        var close = "$('#modalConfirmDeleteComment').modal('hide'); return false;";
+                        var proceed = "window.location.href='" + url + "'; return false;";
+
+                        $('#modalConfirmDeleteComment').modal();
+
+                        var templateContext = {
+                            proceed : proceed,
+                            close : close
+                        }
+                        var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                        var footer = footerTemplate(templateContext);
+                        $('#modalConfirmDeleteComment .modal-footer').html(footer);
+                        $('#modalConfirmDeleteComment').modal('show');
+
+                        e.preventDefault();
+                    }
+        });
+
+        $(".delete-flag").live({
+            click:
+                    function(e) {
+                        var url = $(e.target).attr('href');
+                        var close = "$('#modalConfirmDeleteFlag').modal('hide'); return false;";
+                        var proceed = "window.location.href='" + url + "'; return false;";
+                        var flagType = $(e.target).attr('data-flag_type');
+
+                        $('#modalConfirmDeleteFlag').modal();
+
+                        var templateContext = {
+                            proceed : proceed,
+                            close : close,
+                            flag_type : flagType
+                        }
+                        var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                        var footer = footerTemplate(templateContext);
+                        $('#modalConfirmDeleteFlag .modal-footer').html(footer);
+                        $('#modalConfirmDeleteFlag').modal('show');
+
+                        e.preventDefault();
+                    }
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,173 @@
+html,body,#wrapper {
+    height:100%;
+    padding:0;
+    margin:0;
+    background-color: white;
+}
+
+#wrapper {
+    position:relative;
+}
+
+#top, #middle, #bottom {
+    position:absolute;
+}
+
+#top {
+    height:43px;
+    width:100%;
+}
+
+#middle {
+    /*top:43px;*/
+    top:0px;
+    bottom:0px;
+    width:100%;
+    background-image: url(../img/Black-White-Man-bg-v5.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+#bottom {
+    bottom:0;
+    height:0px;
+    width:100%;
+    background:grey;
+}
+
+img#logo {
+    margin-left: 80px;
+    height: 100%;
+}
+
+#panel {
+    position: fixed;
+    top: 420px;
+    left: 80px;
+    margin: -180px auto auto auto;
+}
+
+#welcome {
+    color: white;
+}
+
+#welcome h1 {
+    line-height: 40px;
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size:39px;
+}
+
+#welcome p {
+    font-size: 14px;
+    line-height: 18px;
+    margin-left: 2px;
+}
+
+.landing-container {
+    margin-top: 40px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    width:395px;
+    background-color: transparent;
+    background-image: url(../img/393.png);
+    background-repeat: repeat;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+.landing-container .text-field {
+    width: 379px;
+}
+
+#login_form .errors {
+    color: red;
+}
+
+#login_errors {
+    height:15px;
+    padding-bottom:5px;
+}
+
+#login_form label {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+#login_form .error{
+    border-color: red;
+}
+
+#login_password {
+    margin-bottom: 0;
+}
+
+.btn-sign,.btn-sign:hover {
+    width: 110px;
+    color: white;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    background-color: #0099cc;
+    background-image: -moz-linear-gradient(top, #0099ff, #0099cc);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0099ff), to(#0099cc));
+    background-image: -webkit-linear-gradient(top, #0099ff, #0099cc);
+    background-image: -o-linear-gradient(top, #0099ff, #0099cc);
+    background-image: linear-gradient(to bottom, #0099ff, #0099cc);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff0099ff', endColorstr='#ff0099cc', GradientType=0);
+    border-color: #0099cc #0044cc #002a80;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+#social_login {
+    border: 1px;
+}
+
+.btn-landing {
+    width: 99px;
+}
+
+#what-would-you-like {
+    font-weight: normal;
+    font-size: 22px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#have-a-look {
+    margin: 0 5px;
+}
+
+.modal.simple.fade {
+    transition: opacity 0.3s linear, left 0s ease-out;
+}
+
+.modal.simple.fade.in {
+    left: 80px;
+    top: 346px;
+    margin-left: 0;
+    width: 393px;
+    transition: opacity 0.3s linear, left 0.3s ease-out;
+}
+
+.simple .modal-body {
+    padding: 23px;
+}
+
+.simple input.simple {
+    width: 334px;
+}
+
+.simple .btn-primary {
+    position: absolute;
+    right: -1px;
+    bottom: -4px;
+}
+
+.simple .checkbox {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}

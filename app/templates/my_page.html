@@ -1,0 +1,57 @@
+{% from '_macros.html' import grid %}
+{% extends 'base.html' %}
+
+{% block main %}
+{% include 'my_page_header.html' %}
+
+{% block my_page_content %}
+    <div id="gridContainer">
+        
+        <div class="grid-item grid-item-dummy" style="visibility: hidden;"></div>
+        <div class="grid-item grid-item-dummy" style="visibility: hidden;"></div>
+        <div class="grid-item grid-item-dummy" style="visibility: hidden;"></div>
+    </div>
+
+    {{grid(250, '/json/my-page/grid', this_user.id)}}
+
+    {% include 'grid_item.tmpl' %}
+{% endblock my_page_content %}
+
+{% endblock main %}
+
+{% block js %}
+{{ super() }}
+<script type="text/javascript">
+$('#sort-by a').click(function(){
+    $('#sort-by').find('a').removeClass('active-sort-by');
+    $(this).addClass('active-sort-by');
+    var sortName = $(this).attr('data-sort_by');
+    if (sortName) {
+        writehere.resetGrid();
+        writehere.setGridSort(sortName);
+        writehere.loadGeneric('#gridContainer', '/json/my-page/grid', '{{this_user.id}}', true);
+        return false;
+    } else {
+        return true;
+    }
+});
+
+$('#btn-follow').click(function(){
+    var url = '{{ url_for("account.follow", user_id=this_user.id) }}';
+    $.get(url,function(data){
+        var btn = $('#btn-follow');
+        var o = $('#followers');
+        var x = o.text();
+        x = parseInt(x);
+        if (data.result){
+            btn.addClass('disabled').text('unfollow my opinions');
+            x += 1;
+        } else if (x > 0) {
+            btn.removeClass('disabled').text('follow my opinions');
+            x -= 1;
+        }
+        o.text(x);
+    })
+});
+</script>
+{% endblock js %}

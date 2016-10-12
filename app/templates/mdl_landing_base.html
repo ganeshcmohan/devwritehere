@@ -1,0 +1,14 @@
+<div id="{% block mdl_id %}{% endblock %}" 
+    class="landing modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <button type="button" class="close close-circle" 
+        data-dismiss="modal" aria-hidden="true">&times;</button>
+    <div class="modal-body">
+        {% block mdl_header %}
+        <h1 class='landing-title'>{% block mdl_verb %}welcome{% endblock %} to write<span style='font-weight:normal'>here<span></h1>
+        <p class='landing-intro'>home for the everyday opinions of everyday people</p>
+        {% endblock %}
+        <div class="mdl_content">
+            {% block mdl_content %}{% endblock %}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+{% from '_macros.html' import render_field %}
+<h3>{{ email.username }}</h3>
+<form action="{{ url_for('admin.admin_email_edit', username=email.username) }}" method="POST" id="editEmailForm">
+    {{ form.hidden_tag() }}
+    {{ render_field(form.name) }}
+    {{ render_field(form.password) }}
+    {{ render_field(form.confirm) }}
+</form>

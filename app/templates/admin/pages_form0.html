@@ -1,0 +1,9 @@
+{% from '_macros.html' import raw_field %}
+
+<form class="form" method="POST" action="{{ url_for('admin.admin_pages', slug=current_slug) }}">
+    {{ form.hidden_tag() }}
+    {{ raw_field(form.title, class_='headline-field required', placeholder='Page Title Goes Here ...', style="") }}
+    {{ raw_field(form.content, class_='content-field auto-hint required', title='') }}
+    <br/>
+    <input type="submit" value="Update" class="btn btn-lg"/>
+</form>

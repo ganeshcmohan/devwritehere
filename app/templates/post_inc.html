@@ -1,0 +1,599 @@
+{% include 'comment_tmpl.html' %}
+<div class="container bg-white position-relative">
+
+    {% if pjax %}
+    <button id="pjax-close" type="button" class="close close-circle"
+        data-dismiss="modal" aria-hidden="true">&times;</button>
+    {% endif %}
+
+    {% include 'addthis_inc.html' %}
+    <div class="row-fluid">
+        <div class="span12">
+            <div id="post_content_container" style="width:98%; float:left">
+                <div class="row-fluid">
+                    <div class="span12">
+                                 {% include 'post_left_inc.html' %}
+                    </div>
+                    <div class="span12">
+                                 {% include 'post_right_inc.html' %}
+                    </div>
+                </div>
+               
+            </div>
+            <div id="post_comment_container" style="width:2%; float:right">
+                <div class="comment-hide" style="display:none"><i class="fa fa-chevron-right" aria-hidden="true"></i></div>
+                <h3 class="comment-header" style="display:none">Comments</h3>
+
+                <div id="commentContainer" class='pull-left'></div>
+            </div>
+            
+            
+        </div>
+       
+    </div>
+     
+    
+</div>
+
+{% if posts_count > 0 %}
+<div class='post-bottom'>
+   <!-- <div class="container"><h3>you may also like...</h3></div> -->
+    {% include 'carousel.html' %}
+</div>
+{% endif %}
+
+<div id="modalConfirmDeleteComment" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>delete comment</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        Are you sure you want to delete this comment?
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="delete-confirmed btn btn-mini">Yes</a>
+        <a href="#" class="delete-cancelled btn btn-mini">No</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+var commentDialogEnabled = false;
+var viewCommentEnabled = false;
+var commentIndex = 1;
+var commentMax = 1;
+var commentLast = 1;
+var commentFirst = 1;
+var commentPosition = 0;
+var newCommentArray = Array();
+var maxTopPositions = Array();
+$('#flagContent select').change(function(e){
+    var newValue = $(this).val();
+    $.ajax({
+        'url': '/json/flag/opinion',
+        'type': 'POST',
+        'dataType': 'json',
+        'data': {'post_id': '{{ post.id }}', 'flag': newValue},
+        'success': function(data) {
+            if (data['success'] == true) {
+                $('#flagContent').html('<div class="alert alert-success" style="margin-left:19px; width:100px;"><a href="#" class="close" onclick="$(this).parent().hide(); return false;">&times;</a>Thanks for your feedback!</div>');
+            }
+        },
+        'error': function () {
+
+        }
+    })
+});
+
+$('#flagComment select').live('change', function(e){
+    var commentId = $('#flagComment').parent().attr('data-comment_id');
+    var newValue = $(this).val();
+    $.ajax({
+        'url': '/json/flag/comment',
+        'type': 'POST',
+        'dataType': 'json',
+        'data': {'comment_id': commentId, 'flag': newValue},
+        'success': function(data) {
+            if (data['success'] == true) {
+                $('#flagComment').html('Thanks for your feedback!');
+            }
+        },
+        'error': function () {
+
+        }
+    })
+});
+
+$('#thumbComment').live('click', function(e){
+    var vote = 0;
+    if ($(e.target).hasClass('icon-thumbs-down')) {
+        vote = -1;
+    } else if (($(e.target).hasClass('icon-thumbs-up'))) {
+        vote = 1;
+    }
+    var commentId = $('#flagComment').parent().attr('data-comment_id');
+    $.ajax({
+        'url': '/json/thumb/comment',
+        'type': 'POST',
+        'dataType': 'json',
+        'data': {'comment_id': commentId, 'vote': vote},
+        'success': function(data) {
+            if (data['success'] == true) {
+                $('#thumbComment .thumb-count').html(data['thumb_count']);
+                $('#commentDataContainer .comment_' + commentId).attr('data-thumb_count', data['thumb_count']);
+            }
+        },
+        'error': function () {
+
+        }
+    })
+});
+
+$(".delete-comment").live({
+    click:
+            function(e) {
+                var url = $(e.target).attr('href');
+                var close = "$('#modalConfirmDeleteComment').modal('hide'); return false;";
+                var proceed = "window.location.href='" + url + "'; return false;";
+
+                $('#modalConfirmDeleteComment').modal();
+
+                var templateContext = {
+                    proceed : proceed,
+                    close : close
+                }
+                var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                var footer = footerTemplate(templateContext);
+                $('#modalConfirmDeleteComment .modal-footer').html(footer);
+                $('#modalConfirmDeleteComment').modal('show');
+
+                e.preventDefault();
+            }
+});
+
+
+var getSelectedText = function() {
+    var t = '';
+    if (window.getSelection) {
+        // one tab open
+
+        var sel = window.getSelection();
+        if (!sel.rangeCount) return;
+        var rng = sel.getRangeAt(0);
+        expandToWord(rng);
+        t = rng.toString();
+    }
+    else if (document.getSelection)  {
+        // multiple tabs open
+        var sel = document.getSelection();
+        if (!sel.rangeCount) return;
+        var rng = sel.getRangeAt(0);
+        expandToWord(rng);
+        t = rng.toString();
+    }
+    else if (document.selection) {
+        // IE
+        var rng = document.selection.createRange();
+        // expand range to enclose any word partially enclosed in it
+        rng.expand("word");
+        t = rng.text;
+    }
+
+    // convert newline chars to spaces .replace(/\r?\n/g, " ") , collapse whitespace, and trim non-word chars
+    return t.replace(/\r?\n/g, " ").replace(/\s+/g, " ").replace(/^\W+|\W+$/g, '');
+};
+
+function expandToWord(range) {
+    if (range.collapsed) return;
+    if (range.toString().replace(/\s+/g, " ") == '') return;
+
+    while (range.startOffset > 0 && range.toString()[0].match(/\w/)) {
+        range.setStart(range.startContainer, range.startOffset - 1);
+    }
+
+    while (range.endOffset < range.endContainer.length &&
+            range.toString()[range.toString().length - 1].match(/\w/)) {
+        range.setEnd(range.endContainer, range.endOffset + 1);
+    }
+}
+
+var showCommentDialog = function(html, extract) {
+    if (typeof(extract) === 'undefined') return;
+
+    if (extract !== '') {
+        var templateContext = {
+            extract : extract.replace(/"/g, '&quot;'),
+            html : html.replace(/"/g, '&quot;')
+        }
+        var commentTemplate = _.template($('#commentTemplate').html());
+        return commentTemplate(templateContext);
+    }
+
+    return false;
+};
+var reply_listt= {};
+
+var renderComment = function renderComment($comment) {
+    var commentTemplate = _.template($('#commentDisplayTemplate').html());
+    
+    myFunction($comment.attr('data-comment_id'),myFunction_success);
+
+    var templateContext = {
+        'author': $comment.attr('data-author'),
+        'author_avatar': $comment.attr('data-author_avatar'),
+        'author_location': $comment.attr('data-author_location'),
+        'author_my_page_url': $comment.attr('data-author_my_page_url'),
+        'formatted_date': $comment.attr('data-formatted_date'),
+        'comment': $comment.attr('data-comment'),
+        'comment_id': $comment.attr('data-comment_id'),
+        'comment_user_id': $comment.attr('data-comment_user_id'),
+        'thumb_count': $comment.attr('data-thumb_count'),
+        'replies' : reply_listt
+    }
+    // console.log(reply_listt[0].author);
+    return commentTemplate(templateContext);
+}
+
+
+function myFunction(id,callback) {
+    var replys = { };
+    $.ajax({
+        url: '/replies/'+id,
+        data: $('form').serialize(),
+        type: 'POST',
+        async: false,
+        success: function(response) {
+            
+            // console.log(response.result[0].author);
+            //replys = response;
+            console.log(response);
+
+            callback(response);            
+
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
+function myFunction_success(replys) {
+
+    reply_listt = replys;
+}
+var getComment = function(commentIndex) {
+    return $('#commentDataContainer div[data-order=' + commentIndex + ']').attr('data-comment');
+}
+
+$('#rightComment').live('click', function() {
+    commentIndex++;
+    if (commentIndex > commentLast) {
+       commentIndex = commentFirst;
+    }
+    var $comment = $('#commentDataContainer div[data-position="' + commentPosition + '"]');
+    if ($comment.length < 1) {
+        commentIndex--;
+        return false;
+    }
+    $comment = $comment.eq(commentIndex-1);
+    $('#comment').data('popover').$tip.find(".popover-content").html(renderComment($comment));
+    $('#currentComment').text(commentIndex);
+
+    /* highlight comment */
+    writehere.clearSelection();
+    var extract = $comment.attr('data-extract');
+    writehere.wrapSelection(extract);
+
+    return false;
+});
+
+$('#leftComment').live('click', function() {
+    commentIndex--;
+    if (commentIndex < commentFirst) {
+        commentIndex = commentLast;
+    }
+
+    var $comment = $('#commentDataContainer div[data-position="' + commentPosition + '"]');
+    if ($comment.length < 1) {
+        commentIndex++;
+        return false;
+    }
+    $comment = $comment.eq(commentIndex-1);
+    $('#comment').data('popover').$tip.find(".popover-content").html(renderComment($comment));
+    $('#currentComment').text(commentIndex);
+
+    /* highlight comment */
+    writehere.clearSelection();
+    var extract = $comment.attr('data-extract');
+    writehere.wrapSelection(extract);
+
+    return false;
+});
+
+$('.comment-hide').live('click', function() {
+    $(".comment-header").hide();
+    $(".comment-hide").hide();
+     $('#post_content_container').css('width', '98%');
+        $('#post_comment_container').css('width', '2%');
+        $('.post-text-container').css('margin-left', '20%');
+        $('.post-text-container').css('margin-right', '20%');
+        $('#comment').popover('destroy');
+        $('#post_comment_container').css('border-left', '0px solid #e5e5e5');
+});
+
+$('#commentContainer').on('click', function(e) {
+    if ($(e.target).hasClass('comment-marker')) {
+
+        /* Update - Creating new comment view  */
+        $('#post_content_container').css('width', '65%');
+        $('#post_comment_container').css('width', '33%');
+        $('.post-text-container').css('margin-left', '10%');
+        $('.post-text-container').css('margin-right', '10%');
+
+        $('#comment').css('visibility', 'hidden');
+        $('.popover').css('visibility', 'hidden');
+        $('#comment').popover('destroy');
+        //$('.comment-marker').css('background', '#e5e5e5');
+        writehere.clearSelection();
+
+        commentIndex = 1;
+        var position = $(e.target).attr('data-position');
+        var commentId = $(e.target).attr('data-comment_id');
+        commentFirst = 1; //parseInt($('#commentDataContainer div[data-position=' + position + ']').first().index);
+        commentIndex = commentFirst;
+        commentPosition = position;
+        commentLast = parseInt($('#commentDataContainer .comment_data_'+position).length);
+
+        var $comment = $('#commentDataContainer div[data-position="' + commentPosition + '"]');
+        if ($comment.length < 1) {
+            commentIndex++;
+            return false;
+        }
+        $comment = $comment.eq(commentIndex-1);
+
+        var currentComment = $comment.attr('data-comment');
+        var extract = $comment.attr('data-extract');
+
+        writehere.clearSelection();
+        writehere.wrapSelection(extract);
+       var titleLine = "";
+        if(commentLast > 1){
+            titleLine = '<span id="leftComment" class="comment-arrow comment-arrow-left">&lt; </span><span id="currentComment">1</span> of ' + commentLast + ' comments <span id="rightComment" class="comment-arrow comment-arrow-right">&gt;</span>';
+
+        } else {
+             titleLine = '';
+        }
+        /*
+         titleLine = '<span id="leftComment" class="comment-arrow comment-arrow-left">&lt; </span><span id="currentComment">1</span> of ' + commentLast + ' comments <span id="rightComment" class="comment-arrow comment-arrow-right">&gt;</span><button class="close close-circle" onclick="$(\'#comment\').popover(\'destroy\'); return false;">&times;</button>';
+         */
+        $('#comment').popover({
+            title: titleLine,
+            content: renderComment($comment),
+            trigger: 'manual',
+            placement: 'right'
+        });
+        $(".comment-header").show();
+        $(".comment-hide").show();
+        
+        var temp_height = $('.post-text-container').height();
+        $('#post_comment_container').height(temp_height);
+        $('#post_comment_container').css('border-left', '2px solid #e5e5e5');
+        $('#post_comment_container').css('padding-left', '2px');
+        
+        $('#comment').popover('show');
+        var x = $('.position-relative').offset().top;
+        var leftval = $('#commentContainer').offset().left;
+        $('.popover').css('top', e.pageY - 30 - x);
+        //$('.popover').css('top', e.pageY - 70 - x);
+        //$('.popover').css('top', e.pageY - x);
+        $('.popover').css('margin-left', 5);
+        //$('.popover').css('left', 646);
+        $('.popover').css('left', leftval - 300);
+        $('.arrow').css('top', 50);
+        
+        return true;
+    }
+});
+
+function replyContent(event,comment_id) {
+      
+    var commentTemplate = _.template($('#replyDisplayTemplate').html());
+    var templateContext = {
+
+        'comment_id': comment_id
+
+    }
+    $('#reply').popover({
+            title: "Post Your Reply",
+            content: commentTemplate(templateContext),
+            trigger: 'manual',
+            placement: 'right'
+        });
+    $('#reply').popover('show');
+        var x = $('.position-relative').offset().top;
+        var leftval = $('#commentContainer').offset().left;
+        $('.popover').css('top', e.pageY - 30 - x);
+        //$('.popover').css('top', e.pageY - 70 - x);
+        //$('.popover').css('top', e.pageY - x);
+        $('.popover').css('margin-left', 5);
+        //$('.popover').css('left', 646);
+        $('.popover').css('left', leftval - 20);
+        $('.arrow').css('top', 50);
+        
+        return true;
+     }
+$(document).on('submit', "#replyformid", function(e) {
+
+        var comment_id = $('#commentField').val();
+
+        $.ajax({
+            url: '/reply/'+comment_id,
+            data: $('form').serialize(),
+            type: 'POST',
+            success: function(response) {
+                console.log(response);
+                console.log(response.message);
+                $('#reply').popover('destroy');
+                writehere.clearSelection();
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+        e.preventDefault();
+
+});
+$('.post-content').bind('lastclick', function(e) {
+    $('#comment').css('visibility', 'hidden');
+    $('.popover').css('visibility', 'hidden');
+    $('#comment').popover('destroy');
+
+    writehere.clearSelection();
+    if ($(e.target).hasClass('post-content') || $(e.target).parent().hasClass('post-content')) {
+        var selectionResult = writehere.setSelection();
+        var showDialog = showCommentDialog(selectionResult.html, selectionResult.text);
+    }
+
+    commentDialogEnabled = false;
+
+    if (showDialog !== false && !$(e.target).hasClass('source-block')) {
+
+        var titleLine = '';
+        {% if user.is_anonymous %}
+            var contentLine = '<a href="{{request.path}}" class="login-required">Login to post comments</a>';
+            $('#mdl_login_or_create').modal('show');
+            return;
+        {% elif not user.verified %}
+            var contentLine = '<br>you will need to <a href="/account/email" class="login-required">verify your email</a> address to post comment.';
+        {% else %}
+            titleLine = 'post comment on selected text<button class="close close-circle" onclick="$(\'#comment\').popover(\'destroy\'); return false;">&times;</button>';
+            var contentLine = showDialog;
+        {% endif %}
+
+        $('#comment').popover({
+            title: titleLine,
+            content: contentLine,
+            trigger: 'manual',
+            placement: 'right'
+        });
+        commentDialogEnabled = true;
+        $('#comment').popover('show');
+    } else {
+        commentDialogEnabled = false;
+        $('#comment').popover('hide');
+        $('#comment').popover('destroy');
+        writehere.clearSelection();
+    }
+    var x = $('.position-relative').offset().top;
+    $('.popover').css('top', e.pageY - 120 - x);
+    $('.popover').css('margin-left', 5);
+    $('.popover').css('left', 646);
+    $('.arrow').css('top', 50);
+});
+
+$('.commentForm').ajaxForm({
+    'delegation': true,
+    success: function (data) {
+        $('#comment').popover('destroy');
+        newCommentArray.push(data);
+        $('.post-content').trigger('resize');
+    }
+});
+
+$(window).load(function() {
+    $('#postPhotoContainer').show();
+    $('.post-content').trigger('resize');
+   
+});
+
+function load_comments(){
+    $('#commentContainer').html('');
+    $('#commentDataContainer').html('');
+
+    var contentTop = $('.post-content').offset().top;
+    var leftPosition = $('#postContainer').width() + 50;
+    var i = 0;
+    maxTopPositions = Array();
+
+    {% for comment in comments %}
+        i++;
+        var decoded = $('<div/>').html('{{comment.extract | nl2brnl }}').text();
+        writehere.wrapSelection(decoded);
+        var position = $('.highlight').position();
+        if (!position){
+            position = $('.author-info').position();
+        
+        }
+        var topPosition = position.top;
+
+        {% if post.image %}
+            {% if post.photo_orientation == 'vertical' %}
+                if (topPosition > 100) topPosition += 100;
+                {% else %}
+                if (topPosition > 100) topPosition += 100;
+            {% endif %}
+        {% endif %}
+
+        writehere.clearSelection();
+        $('#commentDataContainer').append('<div style="display: none;" id="comment_{{comment.id}}" data-order="' + i + '" data-position="' + topPosition + '" data-extract="{{comment.extract | nl2brnl }}" data-comment="{{comment.comment}}" class="comment_data_' + topPosition + ' comment_{{comment.id}}" data-author_my_page_url="{{comment.user.my_page_url}}" data-author="{{comment.user.profile.display_name}}"  data-author_avatar="{{comment.user.avatar_url()}}" data-author_location="{{comment.user.profile.location_line}}" data-formatted_date="{{ comment.display_date }}" data-thumb_count="{{comment.thumb_count}}" data-comment_id="{{comment.id}}" data-comment_user_id="{{comment.user.id}}"></div>');
+        if ($('#commentContainer .comment_' + topPosition).length === 0) {
+            maxTopPositions[topPosition] = 1;
+            $('#commentContainer').append('<div style="top: ' + topPosition + 'px" data-comment_id="{{comment.id}}" data-position="' + topPosition + '" class="comment-marker comment_' + topPosition + ' speech-bubble">'+maxTopPositions[topPosition]+'</div>');
+            $('.comment_{{comment.id}}').css('left', '+=25');
+        } else {
+            maxTopPositions[topPosition]++;
+            $('#commentContainer .comment_' + topPosition).text(maxTopPositions[topPosition]);
+        }
+    {% endfor %}
+
+                _.each(newCommentArray, function(c) {
+                    i++;
+                    //var decoded = $('<div/>').html(c.extract).text();
+                    //$('.post-content').highlight(decoded, {wordsOnly: true});
+                    writehere.wrapSelection(c.extract);
+                    //var topPosition = $('.highlight').position().top;
+                    var position = $('.highlight').position();
+                    if (!position){
+                        position = $('.author-info').position();
+                    }
+                    var topPosition = position.top;
+
+                    {% if post.image %}
+                        {% if post.photo_orientation == 'vertical' %}
+                            if (topPosition > 100) topPosition += 100;
+                            {% else %}
+                            if (topPosition > 100) topPosition += 100;
+                            {% endif %}
+                            {% endif %}
+
+                            writehere.clearSelection();
+                            $('#commentDataContainer').append('<div style="display: none;" ' +
+                                    ' id="comment_'+ c.id +'" ' +
+                                    ' data-order="' + i + '"' +
+                                    ' data-position="' + topPosition + '" data-extract="' + c.extract + '" data-comment="' + c.comment + '"' +
+                                    ' class="comment_data_' + topPosition + ' comment_'+ c.id + '"' +
+                                    ' data-author="'+c.display_name + '" data-author_location="'+c.location + '"' +
+                                    ' data-author_location="" ' +
+                                    ' data-author_my_page_url ="'+ c.author_my_page_url + '"' +
+                                    ' data-formatted_date="' + c.display_date + '"' +
+                                    ' data-thumb_count="'+ c.thumb_count +'" data-comment_id="'+ c.id +'"></div>');
+                            if ($('#commentContainer .comment_' + topPosition).length === 0) {
+                                maxTopPositions[topPosition] = 1;
+                                $('#commentContainer').append('<div style="left: ' + leftPosition +'; top: ' + topPosition + 'px" data-comment_id="' +
+                                        comment.id + '" data-position="' + topPosition + '" class="comment-marker comment_' + topPosition + ' speech-bubble">'+maxTopPositions[topPosition]+'</div>');
+                                $('.comment_' + comment.id).css('left', '+=25');
+                            } else {
+                                maxTopPositions[topPosition]++;
+                                $('#commentContainer .comment_' + topPosition).text(maxTopPositions[topPosition]);
+                            }
+                        });
+
+                        commentMax = i;
+
+    if (!$('#postPhotoContainer:visible')) {
+        $('#postPhotoContainer').show();
+    }
+
+}
+
+$('.post-content').on('resize load', load_comments);
+load_comments();
+</script>

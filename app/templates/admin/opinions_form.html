@@ -1,0 +1,86 @@
+{% from '_macros.html' import render_field, raw_field %}
+
+<div class="pull-left">
+<form id="editOpinionForm" action="{{ url_for('admin.opinions_form', opinion_id=opinion.id) }}" method="POST" >
+    {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-md-6 left">
+            {{ render_field(form.headline,class="full-width")}}
+            {{ render_field(form.extract,class="full-width")}}
+            {{ render_field(form.content,class="full-width",rows="9") }}
+        </div>
+        <div class="col-md-6">
+            <p>Current topics</p>
+            <ul class="inline">
+            {% for t in opinion.topics %}
+            <li>{{t.topic}}</li>
+            {% endfor %}
+            </ul>
+            {{ render_field(form.topics) }}
+        </div>
+    </div>
+</form>
+</div>
+{% if opinion.is_spam %}
+<div class="pull-right btn btn-success spam-control-opinion" data-opinion_id="{{opinion.id}}" data-spam_toggle="0">
+    Not Spam!
+</div>
+{% else %}
+<div class="pull-right btn btn-danger spam-control-opinion" data-opinion_id="{{opinion.id}}" data-spam_toggle="1">
+    Spam!
+</div>
+{% endif %}
+
+<script type="text/javascript">
+    $(function() {
+
+        $('.spam-control-opinion').live('click', function(e) {
+            var opinionId = $(this).attr('data-opinion_id');
+            var toggle = $(this).attr('data-spam_toggle');
+            $.ajax({
+               'url': '{{ url_for("admin.spam_mark_opinion") }}',
+               'type': 'POST',
+               'dataType': 'JSON',
+               'data': {
+                   'toggle': toggle,
+                   'opinion_id': opinionId
+               },
+               'success': function() {
+                   $('#editOpinionModal').hide();
+                   window.location.reload(true);
+               }
+            });
+            e.preventDefault();
+        });
+
+        $('#editOpinionForm').submit(function(e) {
+            var noTags = false;
+
+            if (noTags) {
+                return false;
+            }
+        });
+
+        var serverTags = Array();
+        $.ajax({
+            url: '/json/topics',
+            success: function(data) {
+                if (typeof(data['topics']) !== 'undefined') {
+                    serverTags = data['topics'];
+                }
+            },
+            async: false
+        });
+
+        $("#topics-select").tagit({
+            tags: serverTags,
+            field: "topics"
+        });
+
+        $(".tagit input").live('blur', function(e){
+            $('.fake-input').removeClass('error');
+            $('#missingTopics').hide();
+        });
+    });
+
+</script>

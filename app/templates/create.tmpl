@@ -1,0 +1,46 @@
+{% from '_macros.html' import raw_field, social_login_icon %}
+<script type="text/x-tmpl" id="createTemplate">
+    <div class="well" id="loginWindow">
+        <a href="#" class="close" onclick="$(this).parent().hide(); return false;">&times;</a>
+        <div id="createLogo">
+            <img src="{{ url_for('static', filename='img/write-here-logo-370.png') }}" />
+        </div>
+        <div id="createSocial">
+            <span class="twenty" style="margin-top: 20px;">Create your account:</span>
+            <span class="social-icon-row">
+                <span class="social-icon social-icon-alpha">{{ social_login_icon('facebook', 'Facebook', url_for('static', filename='img/social/48_social_facebook.png')) }}</span>
+                <span class="social-icon">{{ social_login_icon('twitter', 'Twitter', url_for('static', filename='img/social/48_social_twitter.png')) }}</span>
+                <span class="social-icon">{{ social_login_icon('google', 'Google', url_for('static', filename='img/social/48_social_google.png')) }}</span>
+                <span class="social-icon">{{ social_login_icon('linkedin', 'Linked In', url_for('static', filename='img/social/48_social_linkedin.png')) }}</span>
+            </span>
+            <div class="eleven" style="margin-top: 5px; margin-right: 10px;">Use your social media account to ensure the opinions you post are publicized to your networks.</div>
+        </div>
+        <div style="height: 1px; background-color: #eee; text-align: center; margin-top: 20px;">
+          <span style="background-color: white; position: relative; top: -0.7em; font-weight: bold; font-size: 14px;">
+            &nbsp;&nbsp;or&nbsp;&nbsp;
+          </span>
+        </div>
+        <div id="createEmail">
+            <span class="twenty pull-left" style=" margin-left: 15px; margin-top:5px;">Create your account:</span>
+
+
+            <div class="pull-left" style="margin-left: 47px;">
+
+                <form action="{{ url_for('account.register', provider_id=provider.id if provider else None) }}" method="POST" id="createPopupForm">
+                    {{ register_user_form.hidden_tag() }}
+                    {{ raw_field(register_user_form.display_name, class_="required create-field", placeholder="Name") }}
+                    {{ raw_field(register_user_form.email, class_="required create-field", placeholder="Email") }}
+                    {{ raw_field(register_user_form.password, class_="required create-field", placeholder="Password") }}
+                    {{ raw_field(register_user_form.confirm, class_="required create-field", placeholder="Confirm your password") }}
+                    {{ raw_field(register_user_form.terms, class_="required") }}<label for="terms">I agree to the <a href="{{ url_for('general.guidelines') }}">User Guidelines</a>.</label>
+
+                    <div class="clearfix" style="display: block;"></div>
+                    <div class="pull-left" style="margin-top: 10px;margin-bottom:10px;">
+                        <input type="submit" class="well-small blue-button" style="position: absolute; width: 120px;" value="Sign me up!">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</script>

@@ -1,0 +1,36 @@
+<div id="aboutMe"
+    class="grid-item {% if current_user.id == this_user.id %}hover-edit{% endif %}"
+     data-opinion_id="0"
+     data-sort_by_latest="99999999999999999999999999">
+    <div class="well wh-blue" >
+        <div class="hover-controls hide" style="position:absolute; top:10px; right:10px; z-index:10000;">
+            <a class="btn btn-mini" href="{{ url_for('account.profile') }}">Update</a>
+        </div>
+        <h3 class="white">about me</h3>
+        {% if this_user.profile.bio %}
+            <div class='black link-white'>{{ this_user.profile.show_bio()|urlify(25)|safe}}</div>
+        {% endif %}
+        <hr class='hr-bar-white'>
+        {% if this_user.profile.location  %}
+            <div class='black'>at home in {{ this_user.profile.location }}</div>
+        {% else %}
+            <div class='black'>Location: Unknown</div>
+        {% endif %}
+        <hr class='hr-bar-white'>
+        {% if this_user.profile.web_presence %}
+        <div class='black'>find my writing online at:</div>
+        <div class='black link-white break-word'>
+            {{ this_user.profile.show_web_presence()|urlify(25)|safe }}
+        </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated and current_user.id == this_user.id %}
+            <div style="position: absolute; right: 11px;">
+            <a href="{{ url_for('account.profile') }}" style="">
+                <img src="{{ url_for('static', filename='img/gear.png') }}" style="width: 24px; height: 24px;">
+            </a>
+            </div><br/>
+        {% endif %}
+
+    </div>
+</div>

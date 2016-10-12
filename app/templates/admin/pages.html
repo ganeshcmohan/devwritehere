@@ -1,0 +1,23 @@
+{% extends 'admin/admin_base.html' %}
+
+{%- block main %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+
+            <ul class="nav nav-tabs">
+                {% for p in pages %}
+                <li class="{% if p.slug == current_slug %}active{% endif %}">
+                    <a href="{{ url_for('admin.admin_pages', slug=p.slug) }}">{{ p.slug }}</a>
+                </li>
+                {%- endfor %}
+            </ul>
+
+            {% include 'admin/pages_form.html' %}
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'admin/admin_table.html' %}
+
+{% block table %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-block alert-{{category}}">
+        <a href="#" class="close" onclick="$(this).parent().remove();">&times;</a>
+        <div>{{ message }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+
+
+    <h3>Manage Topics</h3>
+
+    <table id="topicTable" class="table table-striped  table-bordered">
+
+        <thead>
+        <tr>
+            <td>Topic Name</td>
+            <td>Date Created</td>
+            <td>Opinions</td>
+            <td>Comments</td>
+            <td>Views</td>
+            <td>Action</td>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for topic in pager.objs %}
+        <tr>
+            <td><a href="#" class="edit-topic" data-topic_id="{{topic.id}}">{{ topic.topic }}</a></td>
+            <td>{{ topic.date_created|formatted_date }}</a></td>
+            <td>
+                {% if topic.posts > 0 %}
+                    <a href="{{ url_for('admin.opinions', topic_id=topic.id) }}">{{ topic.posts }}</a>
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+            <td>
+                {% if topic.comments > 0 %}
+                    <a href="{{ url_for('admin.comments', topic_id=topic.id) }}">{{ topic.comments }}</a>
+                {% else %}
+                    0
+                {% endif %}
+            </td>
+            <td>{{topic.views}}</td>
+            <td>
+                <a href="{{ url_for('admin.delete_topic', topic_id=topic.id) }}" class="delete-topic btn btn-xs btn-danger" data-topic_id="{{topic.id}}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+<div id="modalConfirmDeleteTopic" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+        <h3>Delete Topic</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        Are you sure you want to delete this topic?
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="delete-confirmed btn btn-xs">Yes</a>
+        <a href="#" class="delete-cancelled btn btn-xs">No</a>
+    </div>
+</div>
+        
+        
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+
+
+<script type="text/javascript">
+    $(function() {
+        $('#topicTable').dataTable(adminDataTable);
+
+        $(".delete-topic").live({
+            click:
+                    function(e) {
+                        var url = $(e.target).attr('href');
+                        var close = "$('#modalConfirmDeleteTopic').modal('hide'); return false;";
+                        var proceed = "window.location.href='" + url + "'; return false;";
+
+                        $('#modalConfirmDeleteTopic').modal();
+
+                        var templateContext = {
+                            proceed : proceed,
+                            close : close
+                        }
+                        var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                        var footer = footerTemplate(templateContext);
+                        $('#modalConfirmDeleteTopic .modal-footer').html(footer);
+                        $('#modalConfirmDeleteTopic').modal('show');
+
+                        e.preventDefault();
+                    }
+        });
+    });
+</script>
+{% endblock %}

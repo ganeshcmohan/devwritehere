@@ -1,0 +1,48 @@
+{% from '_macros.html' import raw_field, social_login_icon %}
+
+<div class="modal fade" id="mdl_create_simple" role="dialog">
+    <div class="modal-dialog">
+
+                    <!-- Modal content-->
+        <div class="modal-content">
+            <a href="#close" title="Close" class="close-btn" data-dismiss="modal">x</a>
+            <div class="modal-body">
+                <h2 class="md-signin-header">join our community of writers: </h2>
+                 <form action="{{ url_for('account.register', provider_id=provider.id if provider else None) }}" 
+                class="form modal-landing-form" method="POST" id="createPopupForm">
+                {{ register_user_form.hidden_tag() }}
+                    <div class="form-group-basic">
+                         {{ raw_field(register_user_form.display_name, class_="simple required create-field form-control-basic", placeholder="name") }}
+                    </div>
+                    <div class="form-group-basic">
+                    {{ raw_field(register_user_form.email, class_="simple required create-field form-control-basic", placeholder="email") }}
+                    </div>
+                    <div class="form-group-basic">
+                    {{ raw_field(register_user_form.password, class_="simple required create-field form-control-basic", placeholder="password") }}
+                    </div>
+                    <div class="form-group-basic">
+                     {{ raw_field(register_user_form.confirm, class_="simple required create-field form-control-basic", placeholder="confirm your password") }}
+                    </div>
+                    <div class="checkbox">
+                    <label class="form-control-cb-basic">
+                    <input name="terms" type="checkbox"/> 
+                    I agree to the <a href="{{ url_for('general.guidelines') }}">user guidelines.</a>
+                </label> <button class="create-button"
+                    onclick="$('#mdl_create').modal('hide');"
+                    type="submit">create my profile</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+{% block mdl_content %}
+{% endblock %}

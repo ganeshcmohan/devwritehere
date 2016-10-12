@@ -1,0 +1,118 @@
+<div class="grid-item" data-opinion_id="{{p.id}}">
+    <div class="hover-controls hide" style="position:absolute; top:10px; right:10px; z-index:10000;">
+            <a class="btn btn-mini" href="{{ url_for('write.update_opinion', opinion_id=p.id) }}">Update</a>
+            <a class="btn btn-mini confirm-delete-opinion" href="{{ url_for('write.delete_opinion', opinion_id=p.id) }}" data-opinion_id="{{ p.id }}">Delete</a>
+    </div>
+
+     {% if p.photo_url %}
+       
+        {% if p.photo_orientation == 'vertical' %}
+        <div class="grid-img-container">
+            <a class="pjax" href="{{ p.url }}"><img src="{{ p.photo_url }}" style="width: 210px; height:290px;" /></a>
+        </div>
+        {% else %}
+        <div class="grid-img-container">
+            <a class="pjax" href="{{ p.url }}"><img src="{{ p.photo_url }}" style="width: 210px; height:158px;" /></a>
+        </div>
+         <div >
+           <h1 class="grid-header"> <a class="pjax" href="{{ p.url }}"><span>{{ p.headline }}</span></a></h1>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div><h1 class="grid-header"><a href="{{ p.url }}" class="pjax clickable">{{ p.headline }}</a></h1></div>
+        {% endif %}
+        <div class="opinion-scroller" style="text-align: center;">
+            <div class="grid-text-container text-left" >
+                <a href="{{ p.url }}" class="pjax clickable opinion-black-link">
+                    <p>
+                        {{p.extract|html_to_text}}
+                      </p>              
+                </a>
+                    <a href="{{ url_for('write.my_page', date_slug=p.user.date_slug, display_name_slug=p.user.display_name_slug) }}">
+                    <p>by {{p.user.my_page_anchor}}</p></a>
+                <div class="opinion-topic-list">
+                    {% for t in p.topic_list %}
+                    <a href="{{t.url}}">#{{t.name}}</a>
+                    {% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div> 
+
+                <div class="opinion-stats">
+                    
+                    {% if p.comments > 0 %}
+                    {{p.comments}} &nbsp; <i class="fa fa-commenting-o" aria-hidden="true"></i> 
+                    {% endif %}
+                    {% if p.views > 0 %}
+                    | {{p.views}}  &nbsp;<i class="fa fa-eye" aria-hidden="true"></i> 
+                    {% endif %}
+                    {% if p.shares > 0 %}
+                    | {{p.shares}}  &nbsp; <i class="fa fa-share-alt" aria-hidden="true"></i> 
+                    {% endif %}
+                </div>
+                
+            </div>
+        </div>
+
+        
+    <!--<div class="well">
+        <div class="hover-controls hide" style="position:absolute; top:10px; right:10px; z-index:10000;">
+            <a class="btn btn-mini" href="{{ url_for('write.update_opinion', opinion_id=p.id) }}">Update</a>
+            <a class="btn btn-mini confirm-delete-opinion" href="{{ url_for('write.delete_opinion', opinion_id=p.id) }}" data-opinion_id="{{ p.id }}">Delete</a>
+        </div>
+
+        {% if p.photo_url %}
+        <div class="plain-title plain-title-photo">
+            <a class="pjax" href="{{ p.url }}"><span>{{ p.headline }}</span></a>
+        </div>
+        {% if p.photo_orientation == 'vertical' %}
+        <div class="portrait-image">
+            <a class="pjax" href="{{ p.url }}"><img src="{{ p.photo_url }}" style="width: 210px; height:290px;" /></a>
+        </div>
+        {% else %}
+        <div class="landscape-image">
+            <a class="pjax" href="{{ p.url }}"><img src="{{ p.photo_url }}" style="width: 210px; height:158px;" /></a>
+        </div>
+        {% endif %}
+
+        {% else %}
+        <div class="plain-title"><a href="{{ p.url }}" class="pjax clickable">{{ p.headline }}</a></div>
+        {% endif %}
+
+        <div class="opinion-scroller" style="text-align: center;">
+            <div class="opinion-extract">
+                <a href="{{ p.url }}" class="pjax clickable opinion-black-link">
+                    <div>
+                        {{p.extract|html_to_text}}
+                    </div>
+                </a>
+                <div class="opinion-my-page-anchor">
+                    <a href="{{ url_for('write.my_page', date_slug=p.user.date_slug, display_name_slug=p.user.display_name_slug) }}">by {{p.user.my_page_anchor}}</a>
+                </div>
+
+                <hr class="hr-bar-grey" />
+                <div class="opinion-stats">
+                    {% if p.views > 0 %}
+                    {{p.views}} Views
+                    {% endif %}
+                    {% if p.comments > 0 %}
+                    {{p.comments}} Comments
+                    {% endif %}
+                    {% if p.shares > 0 %}
+                    {{p.shares}} Shares
+                    {% endif %}
+                </div>
+                <hr class="hr-bar-grey" />
+            </div>
+        </div>
+
+        <div class="opinion-topic-list">
+            Topics:
+            {% for t in p.topic_list %}
+            <a href="{{t.url}}">{{t.name}}</a>
+            {% if not loop.last %}, {% endif %}
+            {% endfor %}
+        </div>
+
+    </div> -->
+</div>

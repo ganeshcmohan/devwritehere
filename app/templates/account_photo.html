@@ -1,0 +1,32 @@
+{% extends 'account_base.html' %}
+{% from '_macros.html' import upload %}
+
+{% block title %}: photo{% endblock %}
+
+{% block content %}
+{% if user.avatar %}
+
+<div id="previewImage">
+    <img src="{{url_for('media.show_avatar', user_id=user.id)}}"/>
+    <a class="profile-edit-button-btn confirm-delete-photo" id="deletePhotoButton" 
+    href="{{ url_for('media.remove_user_photo', user_id=user.id) }}">delete</a>
+    <a class="profile-edit-button-btn pull-left" id="uploadAvatarPhoto"
+    href="#">update</a>
+    
+</div>
+
+{% else %}
+
+<div id="previewImage">
+    <img src="{{url_for('static', filename='img/avatar.png')}}"/>
+
+    <button class="profile-edit-button-btn pull-left" id="uploadAvatarPhoto">
+        upload an avatar</button>
+    </div>
+
+    {% endif %}
+
+    {{ upload(upload_form, crop_form, request, upload_type='avatar', current_user=current_user) }}
+
+    {% endblock %}
+

@@ -1,0 +1,27 @@
+<div class="container info-page">
+    <div class="row-fluid">
+        <div class="span9 left">
+            <div class="bg-white page">
+                {% if pjax %}
+                <button id="pjax-close" type="button" class="close close-circle" 
+                    data-dismiss="modal" aria-hidden="true">&times;</button>
+                {% endif %}
+
+                <h2>{{ page.title }}</h2>
+                <hr class='bg-gray'/>
+                {% include 'accordion.html' %}
+            </div>
+        </div>
+        <div class="span3 right">
+
+            {% for tip in tips %}
+            <div class="bg-white pull-left well">
+                <h3 class='tip-title'>{{tip.title}}</h3>
+                <p>{{tip.content|markdown|safe}}</p>
+            </div>
+            {% endfor %}
+
+
+        </div>
+    </div>
+</div>

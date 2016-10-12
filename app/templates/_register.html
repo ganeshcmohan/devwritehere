@@ -1,0 +1,56 @@
+{% from '_macros.html' import render_field %}
+
+{% extends 'base_modal.html' %}
+
+
+
+{% block fragment %}
+
+{% macro social_register(provider_id, display_name) %}
+<form action="{{ url_for('social.login', provider_id=provider_id) }}" method="POST">
+    <button type="submit" class="btn btn-primary btn-large">Register with {{ display_name }}</button>
+</form>
+{% endmacro %}
+
+{% if social_login_failed %}
+<h3>Register with your {{ provider_name }} account:</h3>
+{% endif %}
+
+
+    {% if not social_login_failed %}
+
+    <div class="row content">
+        <div class="span4">
+            <h3>Create your account:</h3>
+        </div>
+
+        <div class="span4">
+            {# social_register('twitter', 'Twitter' ) #}
+            {{ social_register('facebook', 'Facebook') }}
+            <span>Connect your social accounts to ensure the opinions and comments you post are publicized.</span>
+        </div>
+
+    </div>
+    {% endif %}
+
+
+
+    <hr style="width: 100%;"/>
+
+<div class="row content">
+    <div class="span4">
+        <h3>Create your account:</h3>
+    </div>
+    <div class="span4">
+        <form action="{{ url_for('register') }}" method="POST">
+            {{ form.hidden_tag() }}
+            {{ render_field(form.username) }}
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.confirm) }}
+            <button type="submit" class="btn btn-primary btn-large">Register</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

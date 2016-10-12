@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import grid %}
+
+{% block head %}
+    {{ super() }}
+
+    <meta property="og:image" content="http://writehere.com/static/img/wh-128.jpg"/>
+    <meta itemprop="image" content="http://writehere.com/static/img/wh-128.jpg" />
+    <meta name="twitter:image" content="http://writehere.com/static/img/wh-128.jpg" />
+    <meta property="og:title" content="WriteHere.com" />
+    <meta property="og:description" content="Have an opinion? Is there an issue you're passionate about? A discussion you’d like to start? Now you can WriteHere." />
+{% endblock %}
+
+{% block navbar_center %}
+<ul id="navbar-center" class="nav navbar-center-items">
+{% include 'navbar_center.html' %}
+</ul>
+{% endblock %}
+
+{% block main %}
+
+    <div id="gridContainer">
+        {% block gird_placeholder %}{% endblock %}
+        <div class="grid-item" style="visibility: hidden;"></div>
+        <div class="grid-item" style="visibility: hidden;"></div>
+        <div class="grid-item" style="visibility: hidden;"></div>
+        <div class="grid-item" style="visibility: hidden;"></div>
+    </div>
+
+   {% include 'grid_item.tmpl' %}
+
+{%- endblock %}
+
+{% block js %}
+<script type="text/javascript">
+function navbar_filter_change() {
+    var sort = $('#navbar-sort .dropdown-toggle').attr('q');
+    var writers = $('#navbar-writers .dropdown-toggle').attr('q');
+    // TODO: load data for different index here
+    {% block load_grid %}
+    writehere.loadIndex('#gridContainer', true, sort, writers);
+    {% endblock %}
+};
+
+//navbar ordering and filter
+$('#navbar-center .filter').click(function(e){
+    var q = $(this).attr('q');
+    var x = $(this).text();
+    var dropdown = $(this).parent().parent().parent();
+    dropdown.find('ul li').show();
+    $(this).parent().hide();
+    var toggle = dropdown.children('a');
+    toggle.text(x).attr('q',q);
+    navbar_filter_change();
+    return false;
+});
+
+$(window).load(function(){
+    $('#gridContainer').isotope({
+        itemSelector : '.grid-item',
+        columnWidth: parseInt('{{size}}'),
+        layoutMode: 'masonry',
+        isAnimated: true,
+        onLayout: function ($elems, instance) {},
+        animationOptions: {
+            duration: 100,
+            easing: 'linear',
+            queue: true
+        }
+    });
+    navbar_filter_change();//call this while loaded
+});
+</script>
+{% endblock %}

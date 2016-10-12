@@ -1,0 +1,16 @@
+<div id="myCarousel" class="carousel slide" data-interval=''>
+
+<!-- Carousel items -->
+<div class="carousel-inner">
+{%- for column in posts|slice(4) %}
+<div class="item {% if loop.first %}active{% endif %}">
+    {%- for p in column %}
+       {% include 'post_card.html' %} 
+    {%- endfor %}
+</div>
+{%- endfor %}
+
+</div><!--/carousel-inner-->
+<a class="left carousel-control" href="#myCarousel" data-slide="prev"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i></a>
+<a class="right carousel-control" href="#myCarousel" data-slide="next"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+</div><!--/myCarousel-->

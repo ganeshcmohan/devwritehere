@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import render_field %}
+
+{% block main %}
+
+<style>
+    #cropForm {
+        display: none;
+    }
+</style>
+
+<form action="{{ url_for('media.upload') }}" method="POST" id="uploadForm" enctype="multipart/form-data" class="well" style="width: 405px;">
+    <legend>Choose an image file from your computer</legend>
+
+    {{ form.hidden_tag() }}
+
+    {% if form.photo.errors %}
+    <ul class="errors">
+        {% for error in form.photo.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+
+    {{ form.photo()|safe }}
+
+    <br/><br/>
+
+    <div>
+        <button type="submit" class="btn btn-primary" id="uploadButton">Upload Photo</button>
+    </div>
+
+</form>
+
+<form action="{{ url_for('media.crop') }}" method="POST" id="cropForm" enctype="multipart/form-data" class="well" style="width: 405px;">
+    {{ crop_form.hidden_tag() }}
+
+    <legend>Drag and scroll with your mouse!</legend>
+
+    <div id="crop" style="width: 400px; height: 300px; overflow:hidden; border:dotted 1px #000;"></div>
+    <br/>
+    <div>
+        <button type="submit" class="btn btn-large btn-success" id="cropButton" style="width:400px;">Okay, it looks good!</button>
+    </div>
+</form>
+
+<br/><br/>
+
+<div id="croppedPhoto"></div>
+
+<script type="text/javascript">
+    $(function() {
+        var settings = {
+            "viewportWidth" : "100%",
+            "viewportHeight" : "100%",
+            'fitToViewportShortSide' : true,
+            'contentSizeOver100' : false,
+            'startScale': 1,
+            'contentUrl': '/media/crop-photo',
+            "animTime" : 500,
+            "startX" : 0,
+            "startY" : 0,
+            "draggInertia" : 10,
+            "intNavEnable" : true,
+            "intNavPos" : "B",
+            "intNavAutoHide" : false,
+            "intNavMoveDownBtt" : true,
+            "intNavMoveUpBtt" : true,
+            "intNavMoveRightBtt" : true,
+            "intNavMoveLeftBtt" : true,
+            "intNavZoomBtt" : true,
+            "intNavUnzoomBtt" : true,
+            "intNavFitToViewportBtt" : true,
+            "intNavFullSizeBtt" : true,
+            "popupShowAction" : "click"
+        };
+
+        var formOptions = {
+            success: function() {
+                $('#uploadForm').hide();
+                $("#crop").lhpMegaImgViewer(settings);
+                $('#cropForm').show();
+            }
+        };
+
+        $('#uploadForm').submit(function() {
+            $(this).ajaxSubmit(formOptions);
+            return false;
+        });
+
+        $('#cropForm').submit(function() {
+            var cropData = $('#crop').lhpMegaImgViewer('getCurrentState');
+            $('#center_x').attr('value', cropData.xPosInCenter);
+            $('#center_y').attr('value', cropData.yPosInCenter);
+            $('#prop_y').attr('value', cropData.hPropViewpContent);
+            $('#prop_x').attr('value', cropData.wPropViewpContent);
+            $('#zoom').attr('value', cropData.scale);
+            //$(this).ajaxSubmit();
+            //return false;
+        });
+    });
+</script>
+
+
+
+{% endblock %}

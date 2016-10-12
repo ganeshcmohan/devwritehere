@@ -1,0 +1,19 @@
+{% from '_macros.html' import render_field, raw_field, social_login_icon %}
+
+{% extends 'security/base.html' %}
+{% block css %}
+<style>
+.landing-container {
+    background-image: none;
+    padding-left: 2px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div>
+    <a id="btn-join-us" href="#mdl_create_simple" data-toggle="modal"><span class="landing-button">join us - it’s free!</span> </a>       
+    <a  id='have-a-look' href="/"><span class='landing-button'>have a look</span></a>
+    <a id="btn-members-sign-in"  href="#mdl_login_simple" data-toggle="modal"><span class='landing-button'>members sign in</span></a>
+</div>
+{% endblock %}

@@ -1,0 +1,95 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block main %}
+    <div class="container">
+        <h3>Site Summary</h3>
+        <div>
+            <!--<select id="changeTimeZone">
+                <option value="NZ" {% if tz_code == 'NZ' %}selected="selected"{% endif %}>Pacific/Auckland</option>
+                <option value="EST" {% if tz_code == 'EST' %}selected="selected"{% endif %}>US/Eastern</option>
+            </select>-->
+            <div class="pull-right">
+                <b> As of {{ today }} UTC</b>
+            </div>
+        </div>
+
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th></th>
+                <th>Last 24 hours</th>
+                <th>Last 7 days</th>
+                <th>Last 30 days</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><b>Users</b></td>
+                <td>{{ users.today }}</td>
+                <td>{{ users.week }}</td>
+                <td>{{ users.month }}</td>
+                <td>{{ users.total }}</td>
+            </tr>
+            <tr>
+                <td><b>Opinions</b></td>
+                <td>{{ posts.today }}</td>
+                <td>{{ posts.week }}</td>
+                <td>{{ posts.month }}</td>
+                <td>{{ posts.total }}</td>
+            </tr>
+            <tr>
+                <td><b>Comments</b></td>
+                <td>{{ comments.today }}</td>
+                <td>{{ comments.week }}</td>
+                <td>{{ comments.month }}</td>
+                <td>{{ comments.total }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <hr class="admin">
+
+        <h3>Flagged Content</h3>
+        <table class="table table-hover table-bordered" style="table-layout: fixed;">
+            <thead>
+            <tr>
+                <th></th>
+                {% for flag_code, flag_name in flag_types %}
+                    <th>{{ flag_name }}</th>
+                {% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><b>Opinions</b></td>
+                {% for flag_code, flag_name in flag_types %}
+                    <td><a href="{{ url_for('admin.opinions', flag=flag_code) }}">{{ posts[flag_code] }}</a></td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td><b>Comments</b></td>
+                {% for flag_code, flag_name in flag_types %}
+                <td><a href="{{ url_for('admin.comments', flag=flag_code) }}">{{ comments[flag_code] }}</a></td>
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+{# super() #}
+
+<script type="text/javascript">
+$(function() {
+    $('#changeTimeZone').live('change', function(e){
+        window.location.replace("{{url_for('admin.admin_index')}}?timezone=" + $(this).val());
+    });
+});
+</script>
+
+
+{% endblock %}

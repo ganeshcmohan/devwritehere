@@ -1,0 +1,45 @@
+<div class="grid-item isotope-item LL">
+<div class="well">
+
+<div class='black'>
+<div id="writer-name">
+{{ writer.profile.display_name|truncate(20,True) }}
+</div>
+{% if writer.profile.location %}
+<p>{{ writer.profile.location }}</p>
+{% endif %}
+</div>
+
+{% if writer.profile.bio %}
+<div class="about-item">
+<p class="link-white black">
+{{ writer.profile.show_bio()|safe}}
+</p>
+</div>
+{% endif %}
+
+<div class="row-fluid">
+    <div class="span6">
+        <a class="pull-left" 
+        href="{{ writer.my_page_url }}">
+        {% if writer.avatar %}
+        <img class="about-avatar" src="{{ url_for('media.show_avatar', user_id=writer.id) }}" alt="about avatar"/>
+        {% else %}
+        <img class="about-avatar" src="{{ url_for('static', filename='img/avatar.png') }}" alt="about avatar"/>
+        {% endif %}
+        </a>
+    </div>
+    <div class="span6">
+        <div class='black pull-right'>
+        {{ writer.opinion_count }} opinions
+        </div>
+        <div class='black pull-right'>
+        {{ writer.follower_count }} followers
+        </div>
+
+        <a id="view-my-page" href="{{ url_for('write.my_page', date_slug=writer.date_slug, display_name_slug=writer.slug) }}" class="btn btn-primary white pull-right">view my page</a>
+    </div>
+</div>
+
+</div>
+</div>

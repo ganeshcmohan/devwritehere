@@ -1,0 +1,222 @@
+{% extends 'admin/admin_table.html' %}
+
+{% block table %}
+
+    {% if filter_type == 'user' %}
+        <h3>Manage Opinions for User: "<a href="#" class="edit-user" data-user_id="{{filtered.id}}">{{ filtered.profile.display_name }}</a>"</h3>
+    {% elif filter_type == 'topic' %}
+        <h3>Manage Opinions for Topic: "<a href="#" class="edit-topic" data-topic_id="{{filtered.id}}">{{ filtered.topic }}</a>"</h3>
+    {% elif filter_type == 'flag' %}
+        <h3>Manage Opinions flagged as <b>"{{flag_type}}"</b></h3>
+    {% else %}
+        <h3>Manage Opinions</h3>
+    {% endif %}
+
+    <table id="opinionTable" class="table table-striped  table-bordered">
+
+        <thead>
+        <tr>
+            <td>Headline</td>
+            <td>Date Created</td>
+            <td>Author</td>
+            <td>Comments</td>
+            <td>Views</td>
+            <td>Shares</td>
+            <td>Actions</td>
+            <td>Hidden</td>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for opinion in pager.objs %}
+        <tr>
+            <td>
+                <a href="{{ url_for('write.post', date_slug=opinion.date_slug, post_slug=opinion.slug) }}" target="_blank" rel="tooltip" title="View Opinion in New Window">{{ opinion.headline }}</a>
+                {% if opinion.is_draft %}<span class="label label-info">draft</span>{% endif %}
+                {% if current_user.is_super %}
+                    ( <a href="#" class="edit-opinion" data-opinion_id="{{opinion.id}}">edit</a>)
+                {% endif %}
+                <!--<a href="{{ url_for('write.post', date_slug=opinion.date_slug, post_slug=opinion.slug) }}" target="_blank" rel="tooltip" title="View Opinion in New Window"><i class="glyphicon glyphicon-search"></i></a>-->
+            </td>
+            <td>{{ opinion.date_created|formatted_date }}</td>
+            <td>
+                {% if opinion.user %}
+                <a href="#" class="edit-user" data-user_id="{{opinion.user.id}}">{{ opinion.user.profile.display_name }}</a>
+                {% endif %}
+            </td>
+            <td><a href="{{ url_for('admin.comments', opinion_id=opinion.id) }}">{{ opinion.comments }}</a></td>
+            <td>
+                {{ opinion.views }}
+            </td>
+            <td>
+                {{ opinion.shares }}
+            </td>
+            <td>
+                {% if opinion.is_spam %}
+                    <a href="{{ url_for('admin.spam_flag_opinion', opinion_id=opinion.id) }}" class="btn btn-xs btn-success" data-opinion_id="{{opinion.id}}">Re-publish</a>
+                {% else %}
+                    <a href="{{ url_for('admin.spam_flag_opinion', opinion_id=opinion.id) }}" class="btn btn-xs btn-warning" data-opinion_id="{{opinion.id}}">Suspend</a>
+                {% endif %}
+                <a href="{{ url_for('admin.delete_opinion', opinion_id=opinion.id) }}" class="delete-opinion btn btn-xs btn-danger" data-opinion_id="{{opinion.id}}">Delete</a>
+                {% if flag_type %}
+                    <a href="{{ url_for('admin.delete_flag', opinion_id=opinion.id, flag_type=flag_type) }}" class="delete-flag btn btn-xs btn-info" data-opinion_id="{{opinion.id}}" data-flag_type="{{flag_type}}">Remove Flag</a>
+                {% endif %}
+            </td>
+            <td>
+                {% if opinion.is_spam %}Spam{% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+<div id="modalConfirmDeleteOpinion" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+        <h3>Delete Opinion</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        Are you sure you want to delete this opinion? All associated comments will be deleted as well. <br /><br /><b>Warning!</b>This process cannot be reversed.
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="delete-confirmed btn btn-xs">Yes</a>
+        <a href="#" class="delete-cancelled btn btn-xs">No</a>
+    </div>
+</div>
+
+<div id="modalConfirmDeleteFlag" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">Ã—</button>
+        <h3>Remove flag?</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        Are you sure you want to declassify this opinion as {{flag_type}}?
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="delete-confirmed btn btn-xs">Yes</a>
+        <a href="#" class="delete-cancelled btn btn-xs">No</a>
+    </div>
+</div>
+        
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <script type="text/javascript">
+        function setupInplaceEditors() {
+            $('span.inplace').each(function() {
+                var $that = $(this);
+                var opinionId = $that.attr('data-opinion_id');
+                $that.editables({
+                    freezeOn: ['blur', 'keyup'] ,
+                    beforeFreeze: function(display, ev){
+                        var $input = this;
+
+                        if(this.val() == "") return false;
+                        if(ev.which == 27) {
+                            var oldWeight = $(display.context).text();
+                            $input.val(oldWeight);
+                            display.text(oldWeight);
+                            return true;
+                        }
+                        if(ev.which != 13) return false;
+
+
+                        var newWeight = $input.val();
+                        var oldWeight = $(display.context).text();
+                        $.ajax({
+                            'url': "{{ url_for('admin.opinion_update_weight') }}",
+                            'type': 'POST',
+                            'dataType': 'JSON',
+                            'data': {
+                                'weight': newWeight,
+                                'opinion_id': opinionId
+                            },
+                            'success': function(data) {
+                                if (data['result'] == true) {
+                                    display.text(newWeight);
+                                    $input.val(newWeight);
+                                } else {
+                                    alert(data['message']);
+                                    $input.val(oldWeight);
+                                    display.text(oldWeight);
+                                }
+
+                            }
+                        })
+                    }
+                })
+            });
+        }
+
+        $(function() {
+            var extendedDataTable = _.extend(adminDataTable, {
+                "bAutoWidth": false,
+                "aoColumns" : [
+                    null,
+                    {"sWidth": "80px", "sType": 'string'},
+                    null,
+                    {"sWidth": "80px", "sType": 'numeric'},
+                    {"sWidth": "80px", "sType": 'numeric'},
+                    {"sWidth": "80px", "sType": 'numeric'},
+                    { "sWidth": "110px", "bSearchable": false, "aTargets": [ 5 ] },
+                    { "bVisible": false, "aTargets": [ 6 ] }
+                ]
+            });
+            $('#opinionTable')
+                    .bind('sort', function () { setupInplaceEditors(); })
+                    .bind('page', function () { setupInplaceEditors(); })
+                    .dataTable(extendedDataTable);
+
+            setupInplaceEditors();
+
+
+            $(".delete-opinion").live({
+                click:
+                    function(e) {
+                        var url = $(e.target).attr('href');
+                        var close = "$('#modalConfirmDeleteOpinion').modal('hide'); return false;";
+                        var proceed = "window.location.href='" + url + "'; return false;";
+
+                        $('#modalConfirmDeleteOpinion').modal();
+
+                        var templateContext = {
+                            proceed : proceed,
+                            close : close
+                        }
+                        var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                        var footer = footerTemplate(templateContext);
+                        $('#modalConfirmDeleteOpinion .modal-footer').html(footer);
+                        $('#modalConfirmDeleteOpinion').modal('show');
+
+                        e.preventDefault();
+                    }
+            });
+
+            $(".delete-flag").live({
+                click:
+                        function(e) {
+                            var url = $(e.target).attr('href');
+                            var close = "$('#modalConfirmDeleteFlag').modal('hide'); return false;";
+                            var proceed = "window.location.href='" + url + "'; return false;";
+                            var flagType = $(e.target).attr('data-flag_type');
+
+                            $('#modalConfirmDeleteFlag').modal();
+
+                            var templateContext = {
+                                proceed : proceed,
+                                close : close,
+                                flag_type : flagType
+                            }
+                            var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                            var footer = footerTemplate(templateContext);
+                            $('#modalConfirmDeleteFlag .modal-footer').html(footer);
+                            $('#modalConfirmDeleteFlag').modal('show');
+
+                            e.preventDefault();
+                        }
+            });
+        });
+    </script>
+{% endblock %}

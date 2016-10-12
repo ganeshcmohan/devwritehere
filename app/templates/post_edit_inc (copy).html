@@ -1,0 +1,229 @@
+<div id="post-editor" class="container bg-white position-relative">
+{% if pjax %}
+<button id="pjax-close" type="button" class="close close-circle" 
+    data-dismiss="modal" aria-hidden="true">&times;</button>
+{% endif %}
+
+{% from '_macros.html' import raw_field, render_field, upload %}
+{{ upload(upload_form, crop_form, request) }}
+
+<form id="writeForm" class="form" action="" method="POST">
+<div class="row-fluid">
+
+<div class="span12 post-step left">
+<div class="post-step-number muted headline">1.</div>
+<div class="post-step-main">
+{{ form.hidden_tag() }}
+{{ raw_field(form.headline, class_='required headline-field', placeholder='write your headline here ...') }}
+{{ raw_field(form.content, class_='content-field auto-hint required') }}
+</div>
+<div class="clearfix"></div>
+</div>
+
+<div id="write-form-right" class="span12 right">
+<div class="well well-small post-step">
+<div class="post-step-number muted">2.</div>
+<div class="post-step-main">
+{{ raw_field(form.extract, class_='post-right extract-field', maxlength='150', rows='8', placeholder='HELLO Your extract, up to 150 characters. If you choose not to write an extract, the first 150 characters will be used automatically.') }}
+</div>
+<div class="clearfix"></div>
+</div>
+
+<div class="well well-small post-step">
+<div class="post-step-number muted">3.</div>
+<div class="post-step-main">
+{{ raw_field(form.topics, **{'class':'post-right required chosen', 'data-placeholder':'Select your topic (maximum of 2):'}) }}
+</div>
+<div class="clearfix"></div>
+</div>
+
+<div class="alert alert-error hide" id="missingTopics">
+   Please choose at least one topic.
+   <a class="close" onclick="$(this).parent().hide(); return false;" href="#">&times;</a>
+</div>
+
+<div class="alert alert-error hide" id="tooManyTopics">
+   You may choose a maximum of 2 topics.
+   <a class="close" onclick="$(this).parent().hide(); return false;" href="#">&times;</a>
+</div>
+
+<div class="well well-small post-step">
+<div class="post-step-number muted upload">4.</div>
+<div class="post-step-main">
+    <button id="uploadOpinionPhoto" type="button" class="btn">Upload a picture</button>
+    {% if post and post.photo %}
+    <button id="deleteOpinionPhoto" type="button" class="btn">Delete</button>
+    {% endif %}
+    <div id="previewImage">
+    {% if post and post.photo %}
+        <img src="{{ url_for('media.post_photo', post_id=post.id) }}"/>
+    {% else %}
+        <img src="{{ url_for('static', filename='img/blank-photo.png') }}"/>
+    {% endif %}
+    </div>
+
+<p>Who is the photographer? <br />Which website is this image from?</p>
+{{ raw_field(form.photo_source, class_='') }}
+</div>
+<div class="clearfix"></div>
+</div>
+
+<div class="share">
+{% if user.has_twitter %}
+   <label for="{{form.twitter_post.id}}" class="checkbox"> {{ raw_field(form.twitter_post) }} {{form.twitter_post.label}}</label>
+{% endif %}
+{% if user.has_facebook %}
+   <label for="{{form.facebook_post.id}}" class="checkbox"> {{ raw_field(form.facebook_post) }} {{form.facebook_post.label}}</label>
+{% endif %}
+{% if user.has_linkedin %}
+<label for="{{form.linkedin_post.id}}" class="checkbox"> {{ raw_field(form.linkedin_post) }} {{form.linkedin_post.label}}</label>
+{% endif %}
+</div>
+
+<button type="submit" class="btn btn-primary" id="submitWriting">publish my opinion</button>
+<button class="btn pull-right" id="draftWriting">save as draft</button>
+
+</div>
+
+</div>
+</form>
+</div>
+
+<script type="text/javascript">
+
+var MS = 60 * 1000;
+function auto_save(){
+    console.log('auto save draft');
+    $('#save_draft').val('true');
+    $('#writeForm').ajaxSubmit({url: '', type: 'post'});
+    setTimeout(function(){
+        auto_save();
+    }, MS);
+};
+
+//setTimeout(function(){
+    //auto_save();
+//}, MS);
+
+$(function() {
+tinyMCE.init({
+    invalid_elements : "style,script,span",
+    selector : ".content-field",
+    menubar : false,
+    height : 568,
+    force_br_newlines : false,
+    force_p_newlines : false,
+    relative_urls: false,
+    forced_root_block : '',
+    content_css: '/static/js/tiny_mce/content.css',
+    plugins: [
+        'link autolink',
+        'paste',
+    ],
+    paste_as_text: true,
+    toolbar: "undo redo | bold italic underline | link"
+});
+
+jQuery.resize.delay = 10;
+var serverTags = Array();
+$.ajax({
+    url: '/json/topics',
+    success: function(data) {
+        if (typeof(data['topics']) !== 'undefined') {
+            serverTags = data['topics'];
+        }
+    },
+    async: false
+});
+
+$("#topics-select").tagit({
+    tags: serverTags,
+    field: "topics"
+});
+
+$(".tagit input").live('blur', function(e){
+    $('.fake-input').removeClass('error');
+    $('#missingTopics').hide();
+});
+
+$('.commentForm').ajaxForm({
+    target: '#commentBody',
+    'delegation': true,
+    success: function () {
+
+    }
+});
+
+$('#writeForm').validate({
+    errorPlacement: function(error, element) { }
+});
+
+$('#draftWriting').on('click', function(e){
+    console.log('draft');
+    $('#save_draft').val('true');
+    $('#writeForm').trigger('submit');
+});
+
+
+$('#writeForm').submit(function(e) {
+    var noTags = false;
+
+    if ($('#topics').find(':checked').length < 1) {
+        //$('.fake-input').addClass('error');
+        //$('#missingTopics').show();
+       // noTags = true;
+    }
+
+    if ($('#topics').find(':checked').length > 2) {
+        //$('.fake-input').addClass('error');
+       // $('#tooManyTopics').show();
+        //noTags = true;
+    }
+
+    if (noTags) {
+        return false;
+    }
+});
+
+var headlineHeight = $('.headline-field').height();
+var totalHeight = $('#writeColumn').height();
+//$(".content-field").css("height", (totalHeight - headlineHeight - 5) + "px");
+
+//  Focus auto-focus fields
+$('.auto-focuss:first').focus();
+
+//  Initialize auto-hint fields
+$('.content-field.auto-hint').focus(function(){
+    if($(this).val() == $(this).attr('title')){
+        $(this).val('');
+        $(this).removeClass('auto-hint');
+    }
+});
+
+$('.content-field.auto-hint').blur(function(){
+    if($(this).val() == '' && $(this).attr('title') != ''){
+        $(this).val($(this).attr('title'));
+        $(this).addClass('auto-hint');
+    }
+});
+
+$('.content-field.auto-hint').each(function(){
+    if($(this).attr('title') == ''){ return; }
+    if($(this).val() == ''){ $(this).val($(this).attr('title')); }
+    else { $(this).removeClass('auto-hint'); }
+});
+
+$('.chosen').chosen({max_selected_options: 2});
+
+$('#deleteOpinionPhoto').on('click',function(){
+    var yes = confirm('Are you sure you want to delete this photo?');
+    if (yes) {
+        var url =  "{{ url_for('static', filename='img/blank-photo.png') }}";
+        $('#previewImage img').attr('src', url);
+        $('#deleteOpinionPhoto').addClass('hide');
+        $('#delete_photo').val('true');
+    }
+});
+
+});
+</script>

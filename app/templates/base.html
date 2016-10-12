@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    {% include "meta.html" %}
+    <title>WriteHere{%-block title%}{% endblock %}</title>
+    <!-- Responsive Metatag -->
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   
+    <link rel="stylesheet" href=" https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" type="text/css" media="screen">
+
+    <!-- Load font family for sign up -->
+
+    <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon" />
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" type="image/x-icon" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-2.3.2/css/bootstrap.css') }}" />
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />-->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap-2.3.2/css/bootstrap-responsive.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/spin.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='chosen/chosen.css') }}" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.tagit.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery-ui.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/jquery.imagecrop.css') }}" />
+
+    
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,600,400italic,600italic,700,700italic,800,800italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,500' rel='stylesheet' type='text/css'>
+
+
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/modernizr.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-collapse.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/underscore.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.isotope.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.pjax.js') }}"></script>
+    <script src="{{ url_for('static', filename='chosen/chosen.proto.js') }}"></script>
+    <script src="{{ url_for('static', filename='chosen/chosen.jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/spin.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/rangy-core.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='bootstrap-2.3.2/js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.events.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.easymodal.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.form.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.highlight.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.tagit.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.resize.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.validate.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.easing.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.mousewheel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.imagecrop.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/writehere.js') }}"></script>
+
+    <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+
+    {%- block head %}{% endblock %}
+</head>
+<body>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-block alert-{{category}}">
+        <a href="#" class="close" onclick="$(this).parent().remove();">&times;</a>
+        <div>{{ message|safe }}</div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    {% from '_macros.html' import raw_field, social_login_icon %}
+
+    {%- block containers %} <div id="loginContainer"></div> {% endblock %}
+
+    {%- block nav %}
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+              <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </a>
+         
+              <!-- Be sure to leave the brand out there if you want it shown -->
+              <a class="brand pull-left" tabindex="-1" href="/">
+                <strong>write</strong>|here
+                </a>
+         
+              <!-- Everything you want hidden at 940px or less, place within here -->
+              <div class="nav-collapse collapse">
+                {% block navbar_center %}
+                {% if not pjax %}
+                <div id="google_translate_element"></div>
+                {% endif %}
+            {% endblock %}
+            <ul id="navbar-right" class="nav pull-right">
+            {% include 'navbar_right.html' %}
+            </ul>
+              </div>
+            
+            
+        </div>
+    </div>
+    <div class="clearfix"></div>
+</div>
+    {% endblock %}
+
+    {% block main %}{% endblock %}
+
+    <div id="lightbox">
+        <div id="google_translate_element"></div>
+        <div id="pjax"></div>
+    </div>
+    <div class="loading-container hide">
+        <div class="loading"></div>
+        <div id="loading-text">what's your opinion?</div>
+    </div>
+
+    {% block scripts %}
+    <script type="text/x-tmpl" id="confirmFooterTemplate">
+        <div id="confirmFooter">
+            <a href="#" onclick="<%=proceed%>" class="btn btn-mini">Yes</a>
+            <a href="#" onclick="<%=close%>" class="btn btn-mini">No</a>
+        </div>
+    </script>
+
+    <script type="text/x-tmpl" id="opinionExtractTemplate">
+        <div>
+            <a href="<%=my_page_url%>"><%=my_page_text%></a>
+        </div>
+        <div style="text-align: left;">
+            <%=extract%>... <a href="<%=opinion_url%>" class="clickable">[read]</a>
+        </div>
+    </script>
+
+    {% include 'modal.inc' %}
+    {% include 'login.tmpl' %}
+    {% include 'create.tmpl' %}
+    {% include 'mdl_forgot_password.html' %}
+    {% include 'mdl_login.html' %}
+    {% include 'mdl_create.html' %}
+    {% include 'mdl_welcome.html' %}
+    {% include 'welcome_login.tmpl' %}
+    {% include 'first_visit_welcome.tmpl' %}
+    <script type="text/javascript">
+        var g_url_back = '{{request.path}}';//use for pjax back
+    </script>
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
+
+    <script type="text/javascript">
+        var opinionToDelete = null;
+
+        var closeThisMarkup = function(that) {
+            $('.close-live').live('click', function(e) {
+                $(this).hide();
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+            });
+            return '<a href="#" class="close-live">&times;</a>';
+        };
+
+        var loginRequired = function() {
+
+            {% if not current_user.is_authenticated %}
+            var next = document.URL;
+            $('#mdl_login').modal('show');
+            $('#next').val(next);
+            {% endif %}
+        }
+
+        var welcomeLoginRequired = function() {
+
+            {% if not current_user.is_authenticated %}
+                var templateContext = {
+                    'next': $(this).attr('href')
+                }
+                var loginTemplate = _.template($('#welcomeLoginTemplate').html());
+                var login = loginTemplate(templateContext);
+                var docHeight = $(document).height();
+                $("body").append("<div id='overlay'></div>");
+                $("#overlay")
+                        .height(docHeight)
+                        .css({
+                            'opacity' : 0.4,
+                            'position': 'absolute',
+                            'top': 0,
+                            'left': 0,
+                            'background-color': '#fff',
+                            'width': '100%',
+                            'z-index': 100000000
+                        });
+
+                /* stop scrolling while popup is visible */
+                $('body').addClass('stop-scrolling');
+                $('#loginContainer').live('hide', function() {
+                    $('#overlay').remove();
+                    $('body').removeClass('stop-scrolling');
+                    $(this).css({'display': 'none'});
+                });
+
+                $('#loginContainer').html(login);
+                $('#loginContainer').show();
+
+                $('input.next-field').val($(this).attr('href') );
+                $('#next').val($(this).attr('href') );
+
+                $('#loginWindow').css({
+                    'height': '350'
+                });
+
+
+            {% else %}
+
+
+
+            {% endif %}
+
+        }
+
+        function toggleFollowUser(url, el) {
+            $.get(url, function(data) {
+               if (data['result'] == true) {
+                   $(el).text('Stop Following');
+               } else {
+                   $(el).text('Follow Me');
+               }
+            });
+        }
+
+        $(function() {
+            //writehere.loadAutocomplete('.search-query', '/search/autocomplete');
+            $('.search-query.autocomplete').typeahead({
+                    source: function (query, process) {
+                        return $.get('/search/autocomplete', { query: query }, function (data) {
+                            return process(data.items);
+                        });
+                }
+            });
+
+            $('body').on('hidden', '.modal', function () {
+                $(this).removeData('modal');
+            });
+
+            $('.login-required').live('click', function(e) {
+                {% if not current_user.is_authenticated %}
+                    e.preventDefault();
+                    loginRequired();
+                {% endif %}
+            });
+
+            $('.welcome-login-required').live('click', function(e) {
+                {% if not current_user.is_authenticated %}
+                    e.preventDefault();
+                    welcomeLoginRequired();
+                {% endif %}
+            });
+
+            $('.login-live-button').live('click', function(e){
+                loginRequired();
+            });
+            $('.create-live-button').live('click', function(e){
+                $('#createAccount').trigger('click');
+                e.preventDefault();
+            });
+
+            $('.create-account').live('click', function(e) {
+
+                {% if not current_user.is_authenticated %}
+
+                var templateContext = {
+                    'next': $(this).attr('href')
+                }
+                var createTemplate = _.template($('#createTemplate').html());
+                var create = createTemplate(templateContext);
+                var docHeight = $(document).height();
+                $("body").append("<div id='overlay'></div>");
+                $("#overlay")
+                        .height(docHeight)
+                        .css({
+                            'opacity' : 0.4,
+                            'position': 'absolute',
+                            'top': 0,
+                            'left': 0,
+                            'background-color': '#fff',
+                            'width': '100%',
+                            'z-index': 100000000
+                        });
+
+                /* stop scrolling while popup is visible */
+                $('body').addClass('stop-scrolling');
+                $('#loginContainer').live('hide', function() {
+                    $('#overlay').remove();
+                    $('body').removeClass('stop-scrolling');
+                    $(this).css({'display': 'none'});
+                });
+
+                $('#loginContainer').html(create);
+                $('#loginContainer').show();
+
+                $('input.next-field').val($(this).attr('href') );
+                $('#next').val($(this).attr('href') );
+                e.preventDefault();
+
+                $('#loginWindow').css({
+                    'height': '550'
+                });
+                $('#createPopupForm').validate({});
+
+                {% endif %}
+            });
+
+            $.validator.addClassRules({
+                'extract-field': {
+                    maxlength: 150
+                }
+            });
+
+            $.validator.setDefaults({
+                showErrors: function (errorMap, errorList) {
+                    this.defaultShowErrors();
+
+                    // destroy tooltips on valid elements
+                    $("." + this.settings.validClass).tooltip("destroy");
+
+                    // add/update tooltips
+                    for (var i = 0; i < errorList.length; i++) {
+                        var error = errorList[i];
+
+                        $("#" + error.element.id)
+                                .tooltip({ trigger: "focus" })
+                                .attr("data-original-title", error.message)
+                    }
+                },
+                errorPlacement: function(error, element) { }
+            });
+
+            $(".alert").alert();
+
+            $(".hover-edit").live({
+                mouseenter:
+                    function() {
+                        $(this).find('.hover-controls').first().show();
+                    },
+                mouseleave:
+                    function() {
+                        $(this).find('.hover-controls').first().hide();
+                    }
+            });
+
+            $('#rightColumn').hover(function() {
+                $(this).css('opacity', 1);
+            },function() {
+                $(this).css('opacity', 0.6);
+            });
+
+            $('#rightColumnGuidelines').hover(function() {
+                $(this).css('opacity', 1);
+            },function() {
+                $(this).css('opacity', 0.6);
+            })
+
+            $(".confirm-delete-opinion").live({
+                click:
+                    function(e) {
+                        var url = $(e.target).attr('href');
+                        var close = "$('#modalConfirmDeleteOpinion').modal('hide'); return false;";
+                        var proceed = "window.location.href='" + url + "'; return false;";
+
+                        $('#modalConfirmDeleteOpinion').modal();
+
+                        var templateContext = {
+                            proceed : proceed,
+                            close : close
+                        }
+                        var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                        var footer = footerTemplate(templateContext);
+                        $('#modalConfirmDeleteOpinion .modal-footer').html(footer);
+                        $('#modalConfirmDeleteOpinion').modal('show');
+
+                        e.preventDefault();
+                    }
+            });
+
+            $(".confirm-delete-photo").live({
+                click:
+                        function(e) {
+                            var url = $(e.target).attr('href');
+                            var close = "$('#modalConfirmDeletePhoto').modal('hide'); return false;";
+                            var proceed = "window.location.href='" + url + "'; return false;";
+
+                            $('#modalConfirmDeletePhoto').modal();
+
+                            var templateContext = {
+                                proceed : proceed,
+                                close : close
+                            }
+                            var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                            var footer = footerTemplate(templateContext);
+                            $('#modalConfirmDeletePhoto .modal-footer').html(footer);
+                            $('#modalConfirmDeletePhoto').modal('show');
+
+                            e.preventDefault();
+                        }
+            });
+
+            $(".clickable").click(function() {
+                event.stopImmediatePropagation();
+            });
+
+            $('.opinion-arrow-left').live('click', function(e){
+                var opinionId = $(this).parent().attr('data-opinion_id');
+                var topicId= $(this).parent().attr('data-topic_id');
+                var skip= $(this).parent().attr('data-skip');
+                var that = this;
+
+                $.ajax({
+                    'url': '/json/opinion/previous',
+                    'dataType': 'json',
+                    'type': 'GET',
+                    'async': false,
+                    'data': {opinion_id: opinionId, topic_id: topicId, skip: skip},
+                    'success': function(data) {
+                        if(data['result'] === true){
+                            var $currentOpinionMarker = $(that).parent().find('.current-opinion').first();
+                            var currentOpinion = parseInt($currentOpinionMarker.text()) - 1;
+                            $currentOpinionMarker.html(currentOpinion);
+
+                            var opinionExtractTemplate = _.template($('#opinionExtractTemplate').html());
+                            var opinionExtract = opinionExtractTemplate(data);
+
+                            var photoImage = $(that).parent().parent().find('.photo-image').first();
+                            if (photoImage.length > 0) {
+                                if (photoImage.hasClass('portrait-image') && data['opinion_photo_orientation'] == 'vertical') {
+                                    photoImage.find('.opinion-img').attr('src', data['opinion_photo_url']);
+                                }
+                                if (photoImage.hasClass('landscape-image') && data['opinion_photo_orientation'] == 'horizontal') {
+                                    photoImage.find('.opinion-img').attr('src', data['opinion_photo_url']);
+                                }
+                            }
+
+                            $(that).parent().find('.opinion-extract').first().html(opinionExtract);
+                            $(that).parent().attr('data-opinion_id', data['new_opinion_id']);
+                            $(that).parent().attr('data-skip', data['skip']);
+
+                            if (!$('#gridContainer').hasClass('normal-page')) {
+                                $('#gridContainer').isotope('reLayout');
+                            }
+                        }
+                    }
+                });
+                e.preventDefault();
+            });
+
+            $('.opinion-arrow-right').live('click', function(e){
+                var opinionId = $(this).parent().attr('data-opinion_id');
+                var topicId= $(this).parent().attr('data-topic_id');
+                var skip= $(this).parent().attr('data-skip');
+
+                var that = this;
+
+                $.ajax({
+                    'url': '/json/opinion/next',
+                    'dataType': 'json',
+                    'type': 'GET',
+                    'async': false,
+                    'data': {opinion_id: opinionId, topic_id: topicId, skip: skip},
+                    'success': function(data) {
+                        if(data['result'] === true){
+                            var $currentOpinionMarker = $(that).parent().find('.current-opinion').first();
+                            var currentOpinion = parseInt($currentOpinionMarker.text()) + 1;
+                            $currentOpinionMarker.html(currentOpinion);
+
+                            var opinionExtractTemplate = _.template($('#opinionExtractTemplate').html());
+                            var opinionExtract = opinionExtractTemplate(data);
+
+                            var photoImage = $(that).parent().parent().find('.photo-image').first();
+                            if (photoImage.length > 0) {
+                                if (photoImage.hasClass('portrait-image') && data['opinion_photo_orientation'] == 'vertical') {
+                                    photoImage.find('.opinion-img').attr('src', data['opinion_photo_url']);
+                                }
+                                if (photoImage.hasClass('landscape-image') && data['opinion_photo_orientation'] == 'horizontal') {
+                                    photoImage.find('.opinion-img').attr('src', data['opinion_photo_url']);
+                                }
+                            }
+
+                            $(that).parent().find('.opinion-extract').first().html(opinionExtract);
+                            $(that).parent().attr('data-opinion_id', data['new_opinion_id']);
+                            $(that).parent().attr('data-skip', data['skip']);
+
+                            if (!$('#gridContainer').hasClass('normal-page')) {
+                                $('#gridContainer').isotope('reLayout');
+                            }
+                        }
+                    }
+                });
+                e.preventDefault();
+            });
+
+            /* fix z-index of write/update pages */
+            $('.headline-field').focus(function() {
+                $('.headline-field').addClass('on-top');
+                $('.content-field').removeClass('on-top');
+            });
+
+            $('.content-field').focus(function() {
+                $('.content-field').addClass('on-top');
+                $('.headline-field').removeClass('on-top');
+            });
+
+            /* glowing selects */
+
+            $('.shadow-select').live('focusin', function() {
+                $(this).addClass('shadow-select-hover');
+            });
+            $('.shadow-select').live('focusout', function() {
+                $(this).removeClass('shadow-select-hover');
+            });
+
+
+        });
+
+
+        {% if g.first_visit and not current_user.is_authenticated %}
+        if (window.location.pathname == '/'){
+            window.location.href = '/welcome';
+        }
+        {% endif %}
+
+    </script>
+    {% endblock %}
+
+    {% block js %}{% endblock js %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-38388344-2', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'es,zh-CN,zh-TW', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL, multilanguagePage: true, gaTrack: true, gaId: 'UA-38388344-2'}, 'google_translate_element');
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>

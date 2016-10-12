@@ -1,0 +1,38 @@
+{% extends 'account_base.html' %}
+{% from '_macros.html' import render_field2 %}
+
+{% block title %}: email{% endblock %}
+
+{% block content %}
+<h3>please check and verify your email address</h3>
+<p>
+During our first few months of testing, many incorrect or invalid email addresses have caused us quite a few headaches, and more than a few late nights.  
+</p>
+<p>
+A lack of email verification has also made it harder for us to prevent spam being posted on the site.
+</p>
+<p>
+Therefore, we now require that all writers confirm and verify a valid email address.
+</p>
+<p>
+We know this is a bit of a pain, but we appreciate your assistance in making our site more secure.
+</p>
+
+<br/>
+<p>
+First, please make sure your email address is correct. If not, please correct it now.<br/>
+Then click to save and verify your email.<br/>
+A verification link will be sent to the address you provide.<br/>
+<b>
+You will need to complete this verification before you can write more opinions or make comments on WriteHere.
+</b>
+</p>
+
+<form action="" method="POST">
+    {{ form.hidden_tag() }}
+    {{ render_field2(form.email, class_='error required wide-field') }}
+    <div class="actions">
+    <button type="submit" class="btn btn-primary pull-right">save and verify</button>
+    </div>
+</form>
+{% endblock %}

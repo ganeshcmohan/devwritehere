@@ -1,0 +1,39 @@
+<div id="about-the-writer" class="post-right-common pull-right">
+<div class="well">
+<h3>about the writer</h3>
+
+<a class="pull-right" 
+href="{{ url_for('write.my_page', date_slug=post.user.date_slug, display_name_slug=post.user.slug) }}">
+{% if post.user.avatar %}
+<img class="about-avatar" src="{{ url_for('media.show_avatar', user_id=post.user.id) }}" />
+{% else %}
+<img class="about-avatar" src="{{ url_for('static', filename='img/avatar.png') }}" />
+{% endif %}
+</a>
+
+<div class='black about-item'>
+{{ post.user.profile.display_name|truncate(20,True) }}
+{% if post.user.profile.location %}
+<p>{{ post.user.profile.location }}</p>
+{% endif %}
+</div>
+
+<p class='black about-item'>
+{{ post.user.opinion_count }} opinions
+</p>
+
+{% if post.user.profile.web_presence %}
+<div class="about-item">
+<span class='black'>
+find my writing online:
+</span>
+<p class="link-white black">
+{{ post.user.profile.show_web_presence()|urlfy(25)|safe}}
+</p>
+</div>
+{% endif %}
+
+<a href="{{ url_for('write.my_page', date_slug=post.user.date_slug, display_name_slug=post.user.slug) }}" class="btn btn-primary white">view my page</a>
+
+</div>
+</div>

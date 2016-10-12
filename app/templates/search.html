@@ -1,0 +1,20 @@
+{% from '_macros.html' import grid %}
+{% extends 'index.html' %}
+
+{% block load_grid %}
+writehere.loadSearch('#gridContainer', '{{query}}', true, sort, writers);
+{% endblock %}
+
+{% block gird_placeholder %}
+<div id="search-grid" class="grid-item isotope-item LLL">
+    <form id="search-grid-form" class="well wh-blue" action="/search" method="get">
+      <label>search results:</label>
+      <div class="input-append">
+          <input name="query" class="search-query" type="text" value="{{query}}">
+          <button class="btn" type="submit">
+              <img class='img img-icon' src="/static/img/glyphicons_027_search.png" alt="search" />
+          </button>
+      </div>
+    </form>
+</div>
+{% endblock %}

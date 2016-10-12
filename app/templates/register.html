@@ -1,0 +1,46 @@
+{% from '_macros.html' import render_field, social_login_icon %}
+
+{% extends 'base.html' %}
+
+{% block main %}
+
+    <div id="gridContainer" class="normal-page">
+        <div class="row-fluid">
+            <div class="span12">
+
+                <div class="page-header">
+                    <h1>Register</h1>
+                </div>
+                {% if login_failed %}
+                    <h3>Register with your {{ provider.name }} account: {{ connection_values['display_name'] }}</h3>
+                {% endif %}
+                <div class="row content">
+                    <div class="span4 offset1">
+                        <form class="well" action="{{ url_for('account.register', provider_id=provider.id if provider else None) }}" method="POST">
+                            {{ form.hidden_tag() }}
+                            {{ render_field(form.email) }}
+                            {{ render_field(form.display_name) }}
+                            {{ render_field(form.password) }}
+                            {{ render_field(form.confirm) }}
+                            <button type="submit" class="btn btn-primary btn-large">Register</button>
+                        </form>
+                    </div>
+                    {% if not login_failed %}
+                    <div class="span2 col2">
+                        <h3>OR</h3>
+                    </div>
+                    <div class="span4 col3">
+                        <span class="social-icon">{{ social_login_icon('facebook', 'Facebook', url_for('static', filename='img/social/48_social_facebook.png')) }}</span>
+                        <span class="social-icon">{{ social_login_icon('twitter', 'Twitter', url_for('static', filename='img/social/48_social_twitter.png')) }}</span>
+                        <span class="social-icon">{{ social_login_icon('google', 'Google', url_for('static', filename='img/social/48_social_google.png')) }}</span>
+                        <span class="social-icon">{{ social_login_icon('linkedin', 'Linked In', url_for('static', filename='img/social/48_social_linkedin.png')) }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

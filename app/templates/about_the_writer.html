@@ -1,0 +1,100 @@
+
+<div id="about-the-writer" class="about-the-writer text-center">
+    <div class="row-fluid">
+    <div class="span8 text-center"><div id="writer-name" class="profile-name">{{ post.user.profile.display_name|truncate(20,True) }}</div>
+        <div class="writer-name-sub">
+        {% if post.user.profile.location %}
+        <p>{{ post.user.profile.location }}</p>
+        {% endif %}
+        {% if post.user.profile.web_presence %}
+        
+        find my writing online:
+       
+        <p >
+        {{ post.user.profile.show_web_presence()|urlify(20)|safe}}
+        </p>
+       
+        {% endif %}
+        </div>
+        
+
+         <div class="row-fluid writer-content text-center">
+            <div class="span4 text-center">
+                <p class="writer-name-sub">Opinions</p>
+                <p class="writer-name-sub"><strong>{{ post.user.opinion_count }}</strong></p>
+            </div>
+            <div class="span4 text-center">
+                <p class="writer-name-sub">Comments</p>
+                <p class="writer-name-sub"><strong>{{ post.user.follower_count }}</strong></p>
+            </div>
+            <div class="span4 text-center">
+                <p class="writer-name-sub">Posts</p>
+                <p class="writer-name-sub"><strong></strong></p>
+            </div>
+            
+        </div>
+
+        
+    </div>
+    <div class="span4 about-writer-pic-container text-center">
+        <a href="{{ url_for('write.my_page', date_slug=post.user.date_slug, display_name_slug=post.user.slug) }}">
+        {% if post.user.avatar %}
+        <img class="about-avatar" src="{{ url_for('media.show_avatar', user_id=post.user.id) }}" />
+        {% else %}
+        <img class="about-avatar" src="{{ url_for('static', filename='img/avatar.png') }}" />
+        {% endif %}
+        </a>
+    </div>
+    </div>
+</div>
+<!--
+<div id="about-the-writer" class="row about-the-writer text-center">
+<div class="well">
+<h3 class="text-center">about the writer</h3>
+
+<div class='black'>
+<div id="writer-name">
+{{ post.user.profile.display_name|truncate(20,True) }}
+</div>
+{% if post.user.profile.location %}
+<p>{{ post.user.profile.location }}</p>
+{% endif %}
+</div>
+
+{% if post.user.profile.web_presence %}
+<div class="about-item">
+<span class='black'>
+find my writing online:
+</span>
+<p class="link-white black break-word">
+{{ post.user.profile.show_web_presence()|urlify(20)|safe}}
+</p>
+</div>
+{% endif %}
+
+<div class="row-fluid">
+    <div class="span6">
+        <a class="pull-left" 
+        href="{{ url_for('write.my_page', date_slug=post.user.date_slug, display_name_slug=post.user.slug) }}">
+        {% if post.user.avatar %}
+        <img class="about-avatar" src="{{ url_for('media.show_avatar', user_id=post.user.id) }}" />
+        {% else %}
+        <img class="about-avatar" src="{{ url_for('static', filename='img/avatar.png') }}" />
+        {% endif %}
+        </a>
+    </div>
+    <div class="span6">
+        <div class='black pull-right'>
+        {{ post.user.opinion_count }} opinions
+        </div>
+        <div class='black pull-right'>
+        {{ post.user.follower_count }} followers
+        </div>
+
+        <a id="view-my-page" href="{{ url_for('write.my_page', date_slug=post.user.date_slug, display_name_slug=post.user.slug) }}" class="btn btn-primary white pull-right">view my page</a>
+    </div>
+</div>
+
+</div>
+</div>
+-->

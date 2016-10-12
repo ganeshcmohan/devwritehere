@@ -1,0 +1,186 @@
+{% from '_macros.html' import render_field, raw_field, show_provider_button %}
+
+{% extends 'base.html' %}
+
+{% block main %}
+
+<div id="gridContainer" class="normal-page">
+
+<div class="container-fluid">
+
+
+
+
+    <h5>Welcome {{ current_user.profile.display_name or current_user.email }}!</h5>
+
+    <div class="row-fluid content">
+        <div class="span4">
+            {% if user.avatar %}
+
+            <div id="previewImage">
+                <img src="{{url_for('media.show_avatar', user_id=user.id)}}" style="max-width: 200px; max-height: 200px; border: 1px solid #000"/><br/>
+            </div><br />
+
+            <button class="btn btn-primary btn-large" id="uploadProfilePhoto"
+                    data-toggle="modal"
+                    data-target="#modalUploadPhoto">Update Avatar</button>
+            <button class="btn btn-danger btn-large" id="deleteAvatar"
+                    data-toggle="modal"
+                    data-target="#modalUploadPhoto">Delete</button>
+            <br />
+            {% else %}
+
+            <div id="previewImage" class="hide" style="text-align: center;">
+                <img src="{{url_for('static', filename='img/blank.gif')}}" style="max-width: 200px; max-height: 200px; "/><br/>
+            </div><br />
+
+            <button class="btn btn-primary btn-large" id="uploadProfilePhoto"
+                    data-toggle="modal"
+                    data-target="#modalUploadPhoto">Upload an Avatar</button><br />
+
+
+
+            {% endif %}
+
+
+        </div>
+        <div class="span8">
+            <h3>Tell us a little about yourself:</h3>
+            <form class="" action="{{ url_for('account.profile') }}" method="POST">
+                {{ form.hidden_tag() }}
+                {{ render_field(form.display_name, placeholder='Display Name') }}
+                {{ render_field(form.location, placeholder='Which city do you live in?') }}
+                {{ render_field(form.web_presence, placeholder='Where can readers find your writing?(This is the only place to put links to your other blogs, websites, social media accounts, etc. You are not allowed to put these links into your posts.)') }}
+                {{ render_field(form.bio, placeholder='Tell the world a little about yourself ...') }}
+                {# render_field(form.photo) #} <br/>
+                <button type="submit" class="btn btn-primary btn-large">Update Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <h3>Social Connections</h3>
+    {{ show_provider_button('facebook', 'Facebook', facebook_conn) }}
+    {{ show_provider_button('twitter', 'Twitter', twitter_conn) }}
+    {{ show_provider_button('google', 'Google', google_conn) }}
+    {{ show_provider_button('linkedin', 'LinkedIn', linkedin_conn) }}
+
+    </div>
+    <div id="modalUploadPhoto" class="modal hide fade" style="width: 435px;">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3>Upload a Picture</h3>
+        </div>
+        <div class="modal-body" style="text-align: center;">
+            <form action="{{ url_for('media.upload_avatar') }}" method="POST" id="uploadForm" enctype="multipart/form-data">
+                {{ upload_form.hidden_tag() }}
+                {{ raw_field(upload_form.photo) }}
+            </form>
+            <legend>Drag and scroll with your mouse!</legend>
+            <div id="crop" style="width: 300px; height: 300px; overflow:hidden; border:dotted 1px #000;">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <form action="{{ url_for('media.crop_avatar') }}" method="POST" id="cropForm">
+                {{ crop_form.hidden_tag() }}
+                <button class="btn btn-large btn-success" id="cropButton">Okay, looks good!</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $(function() {
+
+        var settings = {
+            "viewportWidth" : "100%",
+            "viewportHeight" : "100%",
+            'fitToViewportShortSide' : true,
+            'contentSizeOver100' : false,
+            'startScale': 1,
+            'contentUrl': "{{ url_for('media.show_avatar', user_id=user.id, size='full')}}",
+            "animTime" : 500,
+            "startX" : 0,
+            "startY" : 0,
+            "draggInertia" : 10,
+            "intNavEnable" : true,
+            "intNavPos" : "B",
+            "intNavAutoHide" : false,
+            "intNavMoveDownBtt" : true,
+            "intNavMoveUpBtt" : true,
+            "intNavMoveRightBtt" : true,
+            "intNavMoveLeftBtt" : true,
+            "intNavZoomBtt" : true,
+            "intNavUnzoomBtt" : true,
+            "intNavFitToViewportBtt" : true,
+            "intNavFullSizeBtt" : true,
+            "popupShowAction" : "click"
+        };
+
+        /* live upload image */
+        $('#photo').live('change', function() {
+            $("#uploadForm").ajaxForm({
+                success: function() {
+                    $('#crop').lhpMegaImgViewer('destroy');
+                    var timestamp = new Date().getTime();
+                    $('#crop img').attr('src',"{{ url_for('media.show_avatar', user_id=user.id, size='full') }}" + '?' +timestamp );
+                    $("#crop").lhpMegaImgViewer(settings);
+                },
+                error: function() {
+                    alert('error');
+                }
+            }).submit();
+        });
+
+        /* reset image viewer when modal is launched */
+        $('#modalUploadPhoto').on('show', function() {
+            $('#uploadForm').each(function(){
+                this.reset();
+            });
+            $('#crop').lhpMegaImgViewer('destroy');
+        });
+
+        $('#removePictureButton').click(function(e){
+            $.ajax({
+                url: '/media/remove',
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    $('#previewImage').hide();
+                }
+            })
+            e.preventDefault();
+        });
+
+        /* send crop coordinates */
+        $('#cropForm').submit(function() {
+
+            var cropData = $('#crop').lhpMegaImgViewer('getCurrentState');
+            $('#center_x').attr('value', cropData.xPosInCenter);
+            $('#center_y').attr('value', cropData.yPosInCenter);
+            $('#prop_y').attr('value', cropData.hPropViewpContent);
+            $('#prop_x').attr('value', cropData.wPropViewpContent);
+            $('#zoom').attr('value', cropData.scale);
+
+            $(this).ajaxSubmit({
+                success: function(data) {
+                    if (data['success'] === true) {
+                        var timestamp = new Date().getTime();
+                        $('#previewImage img').attr('src',"{{url_for('media.show_avatar', user_id=user.id)}}" + '?' +timestamp );
+                        $('#previewImage').fadeIn('slow');
+                        $('#modalUploadPhoto').modal('hide');
+                    } else {
+                        alert('failed');
+                    }
+                }
+            });
+
+            return false;
+        });
+
+
+
+    });
+</script>
+
+{% endblock %}

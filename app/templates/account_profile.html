@@ -1,0 +1,75 @@
+{% extends 'account_base.html' %}
+{% from '_macros.html' import render_field %}
+
+{% block title %}: profile{% endblock %}
+
+{% block content %}
+
+    <section id="profile-edit-container">
+        <div class="profile-edit-container">
+            <h4 class="profile-edit-header">tell us a little about yourself:
+            </h4>
+             <form  action="{{ url_for('account.profile') }}" method="POST">
+            {{ form.hidden_tag() }}
+            
+            {{ render_field(form.display_name, placeholder='Display name', class_='profile-edit-text-box') }}
+            
+             {{ render_field(form.location, placeholder='Which city do you live in?', class_='profile-edit-text-box') }}
+           
+            
+             {{ render_field(form.web_presence, placeholder='Where can readers find your writing?(This is the only place to put links to your other blogs, websites, social media accounts, etc. You are not allowed to put these links into your posts.)', class_='profile-edit-text-area', rows=5) }}
+           
+            
+            {{ render_field(form.bio, placeholder='Tell the world a little about yourself ...', class_='profile-edit-text-area-big', rows=8) }}
+            
+            <a href="{{ url_for('account.delete_user', user_id=current_user.id) }}" 
+            class="profile-edit-button">delete account</a> <button type="submit" class="profile-edit-button-btn">update profile</button>
+            </form>
+        </div>
+    </section>
+
+   
+<div id="modalConfirmDeleteAccount" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3>Delete your Account</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+        Are you sure you want to delete your account, including all opinions, comments, and other interactions?<br /><br />
+        <div class="alert-danger well-small"><b>Warning:</b> Once deleted you will not be able to restore your account!</div>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="delete-confirmed btn btn-mini">Yes</a>
+        <a href="#" class="delete-cancelled btn btn-mini">No</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(function(){
+        $(".delete-account").live({
+            click:
+                    function(e) {
+                        var url = $(e.target).attr('href');
+                        var close = "$('#modalConfirmDeleteAccount').modal('hide'); return false;";
+                        var proceed = "window.location.href='" + url + "'; return false;";
+
+                        $('#modalConfirmDeleteAccount').modal();
+
+                        var templateContext = {
+                            proceed : proceed,
+                            close : close
+                        }
+                        var footerTemplate = _.template($('#confirmFooterTemplate').html());
+                        var footer = footerTemplate(templateContext);
+                        $('#modalConfirmDeleteAccount .modal-footer').html(footer);
+                        $('#modalConfirmDeleteAccount').modal('show');
+
+                        e.preventDefault();
+                    }
+        });
+    });
+
+</script>
+{% endblock %}
+

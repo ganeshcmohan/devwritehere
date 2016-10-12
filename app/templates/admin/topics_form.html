@@ -1,0 +1,9 @@
+{% from '_macros.html' import render_field %}
+
+<form action="{{ url_for('admin.topics_form', topic_id=topic.id) }}" method="POST" id="editTopicForm" class="pull-left;">
+    {{ form.hidden_tag() }}
+    {{ render_field(form.topic) }}
+    {{ render_field(form.as_new) }}
+</form>
+
+<div class="pull-left" id="editTopicError" class="alert alert-error hide"></div>
