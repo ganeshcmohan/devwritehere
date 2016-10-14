@@ -217,11 +217,23 @@ hr {
 
 .popover {
     min-height: 100px;
-    max-height: 330px;
-    width: 312px;
-    height: auto
+/*    max-height: 330px;
+*/    width: 312px;
+    height: auto;
 }
-
+.reply-popover{position: relative;}
+.reply-popover .popover {
+    position: absolute;
+top:-34px !important;
+left: 91px!important;
+z-index: 1010;
+display: none;
+max-width: 206px;
+padding: 1px;
+text-align: left;
+white-space: normal;
+background-color: #ffffff;
+}
 .popover-title {
     text-align: center
 }
@@ -1735,12 +1747,12 @@ hr.admin {
     background: #fff;
     border: 0px solid #ccc;
     overflow: auto;
-    max-height: 100px;
     margin-top: 8px;
     font-family: 'Roboto', sans-serif;
     font-size: 10px;
     font-weight: 400;
     color: #9f9f9f;
+    text-align: justify;
 
 }
 
@@ -1779,8 +1791,8 @@ hr.admin {
     position: absolute;
     top: 0;
     left: 0;
-    height: 60px;
-    width: 60px;
+    height: 40px;
+    width: 40px;
     border-radius:50%;
 }
 //***  Reply css****///
@@ -1795,6 +1807,17 @@ hr.admin {
 .reply-comment {
     cursor: pointer;
     cursor: hand;
+}
+.reply-content{
+    background: #fff;
+    border: 0px solid #ccc;
+    overflow: auto;
+    margin-top: 8px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: #9f9f9f;
+    text-align: justify;
 }
 //***  Reply css end****///
 .comment-meta .comment-info {
@@ -3357,11 +3380,10 @@ select.google_translate_element {
 .bubble {
     position: relative;
     max-width: 230px;
-    max-height: 200px;
     padding: 10px;
     background: #FFFFFF;
     border: #9f9f9f solid 2px;
-    margin-left: 15px;
+    margin-left: 5px;
 }
 
   .bubble:after {

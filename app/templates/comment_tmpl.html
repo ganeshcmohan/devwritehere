@@ -1,3 +1,38 @@
+
+<style>
+    
+    .replydevition{margin-bottom: 5px; margin-left: 50px;}
+       .speech-bubble {
+        position: absolute;
+        display: block;
+        color: #000;
+        padding: 1px;
+        border:1px solid #6699CC;
+        min-width: 25px;
+        height: 15px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 1.5;
+        -webkit-border-radius: 3px;
+        -moz-border-radius:    3px;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: -20px;
+        background-color:#48c2e2;
+    }
+     .speech-bubble:after {
+        content: '';
+        display: block;
+        position: absolute;
+        bottom: -7px;
+        left: 7px;
+        width: 0;
+        border-width: 7px 7px 0 0;
+        border-style: solid;
+        border-color: #48c2e2 transparent;
+    }
+</style>
+
 <script type="text/x-tmpl" id="commentDisplayTemplate">
     <div class="comment-container" style="font-size: 12px !important; " data-comment_id="<%=comment_id%>" >
         <!--<div class="comment-meta">
@@ -42,13 +77,17 @@
                     </div>
                     <div class="comment-content"><%=comment%></div>
 
-                    <div class="replies row-fluid"> Replies
+                    
+                </div>
+            </div>
+        </div>
+        <div class="replies row-fluid"> <img class="img img-rounded avatar-small" src="/static/img/replies.png">
 
                     <%   
                         var reply = {};
                         
                         for (var i = 0, len = replies.result.length; i < len; i++) { %>
-                        <div class=" row-fluid">
+                        <div class=" row-fluid replydevition">
                             <div class="span2">
                                 <img class="reply-avatar" src="<%=replies.result[i].author_avatar%>">
                             </div>
@@ -67,12 +106,11 @@
                     
                         <% if ('{{ current_user.id }}') { %>
                         <button class="btn btn-primary" id="replyContainer" onclick="replyContent(event, id='<%=comment_id%>');">Post Reply</button>
+                        <div class="reply-popover">
                         <div class="reply-content" id="reply" data-html="true"> </div>
+                        </div>
                         <% } %>
                     </div>
-                </div>
-            </div>
-        </div>
     </div>
 </script>
 
@@ -127,7 +165,7 @@
 </script>
 
 <script type="text/x-tmpl" id="commentPostedTemplate">
-    <div>Thanks, <%=first_name%>. We'=ve successfully posted your comment!
+    <div>Thanks, <%=first_name%>. We've successfully posted your comment!
     </div>
     <br /><br />
 

@@ -386,7 +386,7 @@ $('#commentContainer').on('click', function(e) {
         //$('.popover').css('top', e.pageY - x);
         $('.popover').css('margin-left', 5);
         //$('.popover').css('left', 646);
-        $('.popover').css('left', leftval - 300);
+        $('.popover').css('left', leftval - 60);
         $('.arrow').css('top', 50);
         
         return true;
@@ -409,30 +409,44 @@ function replyContent(event,comment_id) {
         });
     $('#reply').popover('show');
         var x = $('.position-relative').offset().top;
-        var leftval = $('#commentContainer').offset().left;
-        $('.popover').css('top', e.pageY - 30 - x);
+        //var leftval = $('#commentContainer').offset().left;
+      //  $('.popover').css('top', e.pageY + 40 - x);
         //$('.popover').css('top', e.pageY - 70 - x);
         //$('.popover').css('top', e.pageY - x);
-        $('.popover').css('margin-left', 5);
+     //   $('.popover').css('margin-left', 5);
         //$('.popover').css('left', 646);
-        $('.popover').css('left', leftval - 20);
-        $('.arrow').css('top', 50);
+       // $('.popover').css('left', 0);
+      //  $('.arrow').css('top', 50);
+      console.log("rely popup");
         
         return true;
      }
 $(document).on('submit', "#replyformid", function(e) {
 
         var comment_id = $('#commentField').val();
-
+        var text=$("#replyformid textarea").val();
         $.ajax({
             url: '/reply/'+comment_id,
             data: $('form').serialize(),
             type: 'POST',
             success: function(response) {
-                console.log(response);
-                console.log(response.message);
                 $('#reply').popover('destroy');
                 writehere.clearSelection();
+                $(".replies").append('<div class=" row-fluid replydevition">\
+                                          <div class="span2">\
+                                <img class="reply-avatar" src="/static/img/avatar.png">\
+                            </div>\
+                            <div class="span8">\
+                                <div class="bubble">\
+                                    <div class="comment-meta">\
+                                        <div class="comment-info">\
+                                           <a class="comment-author" href="#"></a>\
+                                        </div>\
+                                    </div>\
+                                  <div class="reply-content">'+text+'</div>\
+                                </div>\
+                            </div>\
+                        </div>');
             },
             error: function(error) {
                 console.log(error);
