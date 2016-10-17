@@ -431,22 +431,24 @@ $(document).on('submit', "#replyformid", function(e) {
             type: 'POST',
             success: function(response) {
                 $('#reply').popover('destroy');
+                
                 writehere.clearSelection();
-                $(".replies").append('<div class=" row-fluid replydevition">\
+                
+                $('<div class=" row-fluid replydevition">\
                                           <div class="span2">\
-                                <img class="reply-avatar" src="/static/img/avatar.png">\
+                                <img class="reply-avatar" src="'+response["user_image_url"]+'">\
                             </div>\
                             <div class="span8">\
                                 <div class="bubble">\
                                     <div class="comment-meta">\
                                         <div class="comment-info">\
-                                           <a class="comment-author" href="#"></a>\
+                                           <a class="comment-author" href="'+response["user_my_page_url"]+'">'+response["display_name"]+'</a>\
                                         </div>\
                                     </div>\
                                   <div class="reply-content">'+text+'</div>\
                                 </div>\
                             </div>\
-                        </div>');
+                        </div>').insertBefore(".replies .rply")
             },
             error: function(error) {
                 console.log(error);

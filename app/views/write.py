@@ -570,6 +570,8 @@ def reply(comment_id):
     user = get_user_object(current_user)
     comment = Comment.objects(id=ObjectId(comment_id)).first()
 
+    print user,""
+
     if not comment:
         return ''
 
@@ -581,7 +583,7 @@ def reply(comment_id):
             reply.save()
             reply.comment.save()
 
-
+            
             return jsonify({
                 'result': True,
                 'message' : "Added new reply",
@@ -592,6 +594,7 @@ def reply(comment_id):
                 'reply': reply.reply,
                 'location': reply.user.profile.location,
                 'display_date': reply.display_date,
+                'user_image_url':user.avatar_url()
 
             })
 
